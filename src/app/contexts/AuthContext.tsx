@@ -22,6 +22,15 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "token" && !e.newValue) {
+        setUser(null);
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange);
+
+
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -34,6 +43,10 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
       .then(res => setUser(res.data))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    }
   }, []);
 
   // Función logout
