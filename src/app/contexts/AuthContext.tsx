@@ -6,7 +6,7 @@ interface AuthContextType {
   user: Usuario | null;
   loading: boolean;
   setUser: React.Dispatch<React.SetStateAction<Usuario | null>>;
-  logout: () => Promise<void>; // Añadido logout al contexto
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,6 +20,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const [user, setUser] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Cargar el perfil del usuario desde el backend al montar el componente
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -29,7 +30,6 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
       return;
     }
 
-    // Solo se realiza la solicitud si hay un token en el localStorage
     AxiosInstance.get("/user/auth/usuarios/perfil/")
       .then(res => setUser(res.data))
       .catch(() => setUser(null))
@@ -39,9 +39,9 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   // Función logout
   const logout = async () => {
     try {
-      await AxiosInstance.post("/user/auth/usuarios/logout/");
-      localStorage.removeItem("token"); // Limpiar el token en localStorage solo en este dispositivo
-      setUser(null); // Limpiar el estado de usuario
+      await AxiosInstance.post("/user/auth/usuarios/logout/");  // Llamar al backend para hacer logout
+      localStorage.removeItem("token"); // Eliminar el token solo en este dispositivo
+      setUser(null);  // Limpiar el estado global de usuario
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
