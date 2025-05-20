@@ -17,13 +17,10 @@ const AxiosInstance = axios.create({
 });
 
 AxiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token"); // token clásico
-
-  if (token) {
-    if (!config.headers) config.headers = {} as import("axios").AxiosRequestHeaders;
-    config.headers["Authorization"] = `Token ${token}`;  // IMPORTANTE: Token, no Bearer
-  }
-
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (token) {
+    config.headers["Authorization"] = `Token ${token}`;
+    }
   const csrfToken = Cookies.get("csrftoken");
   if (csrfToken) {
     config.headers["X-CSRFToken"] = csrfToken;

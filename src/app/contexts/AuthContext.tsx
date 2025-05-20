@@ -22,7 +22,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
 
   // Cargar el perfil del usuario desde el backend al montar el componente
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
     if (!token) {
       setUser(null);
@@ -39,9 +39,15 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   // Función logout
   const logout = async () => {
     try {
-      await AxiosInstance.post("/user/auth/usuarios/logout/");  // Llamar al backend para hacer logout
-      localStorage.removeItem("token"); // Eliminar el token solo en este dispositivo
-      setUser(null);  // Limpiar el estado global de usuario
+      await AxiosInstance.post("/user/auth/usuarios/logout/");
+
+      // Eliminar token de ambos almacenamientos
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      localStorage.removeItem("datosDelUsuario");
+      sessionStorage.removeItem("datosDelUsuario");
+
+      setUser(null);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }

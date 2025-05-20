@@ -28,11 +28,15 @@ export default function Login() {
           password,
         });
         const { token, user } = data;
-        setUser(data.user);
+        setUser(user);
 
-        localStorage.setItem("token", token);
+        // Almacenar el token según la opción "remember me"
         if (remember) {
+          localStorage.setItem("token", token);
           localStorage.setItem("datosDelUsuario", JSON.stringify(data));
+        } else {
+          sessionStorage.setItem("token", token);
+          sessionStorage.setItem("datosDelUsuario", JSON.stringify(data));
         }
 
         // redireccionar según rol
