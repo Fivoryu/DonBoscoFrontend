@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AxiosInstance from "@/components/AxiosInstance";
-
 import { Usuario } from "../modelos/Usuarios";
 
 interface AuthContextType {
   user: Usuario | null;
   loading: boolean;
   setUser: React.Dispatch<React.SetStateAction<Usuario | null>>;
-  logout: () => Promise<void>;  // Añadido logout al contexto
+  logout: () => Promise<void>; // Añadido logout al contexto
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,15 +21,6 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "token" && !e.newValue) {
-        setUser(null);
-      }
-    }
-
-    window.addEventListener("storage", handleStorageChange);
-
-
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -39,21 +29,18 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
       return;
     }
 
+    // Solo se realiza la solicitud si hay un token en el localStorage
     AxiosInstance.get("/user/auth/usuarios/perfil/")
       .then(res => setUser(res.data))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    }
   }, []);
 
   // Función logout
   const logout = async () => {
     try {
       await AxiosInstance.post("/user/auth/usuarios/logout/");
-      localStorage.removeItem("token");
+      localStorage.removeItem("token"); // Limpiar el token en localStorage solo en este dispositivo
       setUser(null); // Limpiar el estado de usuario
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
