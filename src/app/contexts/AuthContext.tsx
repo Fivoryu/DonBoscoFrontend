@@ -7,13 +7,14 @@ interface AuthContextType {
   user: Usuario | null;
   loading: boolean;
   setUser: React.Dispatch<React.SetStateAction<Usuario | null>>;
+  logout: () => Promise<void>;  // Añadido logout al contexto
 }
-
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  setUser: () => {}
+  setUser: () => {},
+  logout: async () => {}, // Proporcionar una función por defecto vacía
 });
 
 export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
@@ -21,25 +22,36 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setUser(null);
-    setLoading(false);
-    return;
-  }
+    const token = localStorage.getItem("token");
 
-  AxiosInstance.get("/user/auth/usuarios/perfil/")
-    .then(res => setUser(res.data))
-    .catch(() => setUser(null))
-    .finally(() => setLoading(false));
-}, []);
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
 
+    AxiosInstance.get("/user/auth/usuarios/perfil/")
+      .then(res => setUser(res.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Función logout
+  const logout = async () => {
+    try {
+      await AxiosInstance.post("/user/auth/usuarios/logout/");
+      localStorage.removeItem("token");
+      setUser(null); // Limpiar el estado de usuario
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser }}>
-      {children} 
+    <AuthContext.Provider value={{ user, loading, setUser, logout }}>
+      {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
 export const useAuth = () => useContext(AuthContext);

@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-interface Props { 
+interface Props {
   children: JSX.Element;
   requireRole?: string;
 }

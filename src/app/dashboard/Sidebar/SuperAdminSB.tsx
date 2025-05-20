@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
-import AxiosInstance from "@/components/AxiosInstance";
+// import AxiosInstance from "@/components/AxiosInstance";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 interface NavItem {
   to: string;
@@ -97,14 +98,14 @@ export default function SuperAdminSB() {
   const [openSide, setOpenSide] = useState(true);
   const navigate = useNavigate();
 
-  const logout = async () => {
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
     try {
-      await AxiosInstance.post("/user/auth/usuarios/logout/");
-      localStorage.removeItem("token");
-      localStorage.removeItem("datosDelUsuario");
-      navigate("/login");
+      await logout();  // Llamar a la función logout del contexto
+      navigate("/login");  // Redirigir al login
     } catch (err) {
-      console.error(err);
+      console.error("Error al cerrar sesión:", err);
     }
   };
 
@@ -166,7 +167,7 @@ export default function SuperAdminSB() {
       {/* Logout */}
       <div className="p-4 border-t">
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className={clsx(
             "flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-red-50 transition-colors",
             openSide ? "text-red-600" : "justify-center text-red-600"
