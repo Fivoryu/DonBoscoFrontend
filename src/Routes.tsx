@@ -10,6 +10,8 @@ import SuperAdminColegios from "./app/dashboard/SuperAdmin/Colegios";
 import SuperAdminUnidades from "./app/dashboard/SuperAdmin/Unidades";
 import SuperAdminUsuarios from "./app/dashboard/SuperAdmin/Usuarios";
 import SuperAdminInfraestructura from "./app/dashboard/SuperAdmin/Infraestructura";
+
+import SuperAdminGrados from "./app/dashboard/SuperAdmin/Grado";
 import RequireAuth from "./app/routes/RequireAuth";
 
 export const Routes: RouteObject[] = [
@@ -38,6 +40,7 @@ export const Routes: RouteObject[] = [
       { path: "unidades", element: <SuperAdminUnidades /> },
       { path: "usuarios", element: <SuperAdminUsuarios /> },
       { path: "infraestructura", element: <SuperAdminInfraestructura /> },
+      { path: "grados", element: <SuperAdminGrados /> },
     ],
   },
   // { path: "*", element: <NotFound /> }
