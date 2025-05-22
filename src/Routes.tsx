@@ -10,7 +10,12 @@ import SuperAdminColegios from "./app/dashboard/SuperAdmin/Colegios";
 import SuperAdminUnidades from "./app/dashboard/SuperAdmin/Unidades";
 import SuperAdminUsuarios from "./app/dashboard/SuperAdmin/Usuarios";
 import SuperAdminInfraestructura from "./app/dashboard/SuperAdmin/Infraestructura";
+import SuperAdminRoles from "./app/dashboard/SuperAdmin/Roles";
 import RequireAuth from "./app/routes/RequireAuth";
+import SuperAdminAulas from "./app/dashboard/SuperAdmin/Aulas";
+import SuperAdminModulos from "./app/dashboard/SuperAdmin/Modulos";
+import SuperAdminCursos from "./app/dashboard/SuperAdmin/Cursos";
+import SuperAdminParalelos from "./app/dashboard/SuperAdmin/Paralelos";
 
 export const Routes: RouteObject[] = [
   {
@@ -38,6 +43,11 @@ export const Routes: RouteObject[] = [
       { path: "unidades", element: <SuperAdminUnidades /> },
       { path: "usuarios", element: <SuperAdminUsuarios /> },
       { path: "infraestructura", element: <SuperAdminInfraestructura /> },
+      { path: "modulos", element: <SuperAdminModulos /> },
+      { path: "aulas", element: <SuperAdminAulas /> },
+      { path: "cursos", element: <SuperAdminCursos /> },
+      { path: "paralelos", element: <SuperAdminParalelos />},
+      { path: "roles", element: <SuperAdminRoles /> },
     ],
   },
   // { path: "*", element: <NotFound /> }

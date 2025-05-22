@@ -110,9 +110,9 @@ export default function UsuariosTable({
                   <td className="px-4 py-3">{u.nombre}</td>
                   <td className="px-4 py-3">{u.apellido}</td>
                   <td className="px-4 py-3 text-center">
-                    {u.sexo?.toLowerCase() === "masculino" ? (
+                    {u.sexo?.toUpperCase() === "M" ? (
                       <Mars className="w-5 h-5 text-blue-600" />
-                    ) : u.sexo?.toLowerCase() === "femenino" ? (
+                    ) : u.sexo?.toUpperCase() === "F" ? (
                       <Venus className="w-5 h-5 text-pink-600" />
                     ) : (
                       <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">

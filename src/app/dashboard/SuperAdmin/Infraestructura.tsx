@@ -15,14 +15,14 @@ export default function SuperAdminInfraestructura() {
   const [colegios, setColegios] = useState<Colegio[]>([]);
 
   useEffect(() => {
-    AxiosInstance.get<Colegio[]>("/institucion/listar-colegios/")
+    AxiosInstance.get<Colegio[]>("/institucion/colegios/listar/")
       .then(res => setColegios(res.data))
       .catch(() => alert("No se pudieron cargar los colegios."));
   }, []);
 
 
   useEffect(() => {
-    AxiosInstance.get("/institucion/listar-modulos/")
+    AxiosInstance.get("/institucion/modulos/listar/")
       .then(res =>
         setModulos(
           res.data.map((m: any) => ({
@@ -48,7 +48,7 @@ export default function SuperAdminInfraestructura() {
           nombre: string;
           cantidad_aulas: number;
           colegio_fk: number;
-        }>(`/institucion/editar-modulo/${m.id}/`, {
+        }>(`/institucion/modulos/editar/${m.id}/`, {
           nombre: m.nombre,
           cantidad_aulas: m.cantidadAulas,
           colegio_fk: m.colegioId,
@@ -75,7 +75,7 @@ export default function SuperAdminInfraestructura() {
           nombre: string;
           cantidad_aulas: number;
           colegio_fk: number;
-        }>(`/institucion/crear-modulo/`, {
+        }>(`/institucion/modulos/crear/`, {
           nombre: m.nombre,
           cantidad_aulas: m.cantidadAulas,
           colegio_fk: m.colegioId,
@@ -114,7 +114,7 @@ export default function SuperAdminInfraestructura() {
   const delModulo = async (id: number) => {
     if (!confirm("¿Estás seguro de eliminar este módulo?")) return;
     try {
-      await AxiosInstance.delete(`/institucion/eliminar-modulo/${id}/`);
+      await AxiosInstance.delete(`/institucion/modulos/eliminar/${id}/`);
   
       // Filtrar del estado local
       setModulos((prev) => prev.filter((x) => x.id !== id));
@@ -129,7 +129,7 @@ export default function SuperAdminInfraestructura() {
     if (a.id) {
       // edición
       const res = await AxiosInstance.put<Aula>(
-        `/institucion/editar-aula/${a.id}/`,
+        `/institucion/aulas/editar/${a.id}/`,
         a
       );
       setAulas(prev =>
@@ -138,7 +138,7 @@ export default function SuperAdminInfraestructura() {
     } else {
       // creación
       const res = await AxiosInstance.post<Aula>(
-        `/institucion/crear-aula/`,
+        `/institucion/aulas/editar/`,
         { ...a, modulo: modalAulas!.id }
       );
       setAulas(prev => [...prev, res.data]);
@@ -146,7 +146,7 @@ export default function SuperAdminInfraestructura() {
   };
   
   const delAula = async (id: number) => {
-    await AxiosInstance.delete(`/institucion/eliminar-aula/${id}/`);
+    await AxiosInstance.delete(`/institucion/aulas/eliminar/${id}/`);
     setAulas(prev => prev.filter(x => x.id !== id));
   };
 

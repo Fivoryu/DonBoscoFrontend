@@ -20,7 +20,7 @@ export default function GestorAulas({ modulo, onSave, onDelete }: Props) {
   const [aulas, setAulas] = useState<Aula[]>([]);
 
   useEffect(() => {
-    AxiosInstance.get("/institucion/listar-aulas/")
+    AxiosInstance.get("/institucion/aulas/listar/")
       .then(res => {
         const api: Aula[] = res.data
           .filter((a: any) => a.modulo === modulo.id)

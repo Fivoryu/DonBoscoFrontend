@@ -17,6 +17,7 @@ import {
   BookOpen,
   FileText,
   UserCheck,
+  User
 } from "lucide-react";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -58,6 +59,7 @@ const sections: Array<{
         icon: CalendarIcon,
       },
       { to: "/dashboard/superadmin/cursos", label: "Cursos", icon: BookOpen },
+      { to: "/dashboard/superadmin/paralelos", label: "Paralelos", icon: FileText },
       {
         to: "/dashboard/superadmin/materia",
         label: "Materia",
@@ -78,6 +80,11 @@ const sections: Array<{
         to: "/dashboard/superadmin/usuarios",
         label: "Usuarios",
         icon: UsersIcon,
+      },
+      {
+        to: "/dashboard/superadmin/roles",
+        label: "Roles",
+        icon: User,
       },
     ],
   },

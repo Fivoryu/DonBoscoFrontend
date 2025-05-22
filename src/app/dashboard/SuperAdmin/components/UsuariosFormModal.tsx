@@ -9,6 +9,25 @@ interface Props {
   onSave: (updated: Usuario) => void;
 }
 
+const getRolNombreById = (id: number): string => {
+  switch (id) {
+    case 2:
+      return "superadmin";
+    case 3:
+      return "admin";
+    case 4:
+      return "estudiante";
+    case 5:
+      return "profesor";
+    case 6:
+      return "tutor";
+    default:
+      return "";
+  }
+};
+
+
+
 export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
   const [form, setForm] = useState<Usuario>(
     initial ?? ({
@@ -44,11 +63,25 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    Object.entries(form).forEach(([k, v]) => {
-      if (v != null && v !== "") {
-        formData.append(k, v as any);
-      }
-    });
+
+    // Agregas todos los campos simples
+    formData.append("ci", form.ci);
+    formData.append("nombre", form.nombre);
+    formData.append("apellido", form.apellido);
+    formData.append("email", form.email);
+    formData.append("username", form.username);
+    if (form.password)      formData.append("password", form.password);
+    if (form.telefono)      formData.append("telefono", form.telefono);
+    if (form.fecha_nacimiento)
+                            formData.append("fecha_nacimiento", form.fecha_nacimiento);
+    if (form.sexo)          formData.append("sexo", form.sexo);
+    if (form.foto && (form.foto as any) instanceof File)
+                            formData.append("foto", form.foto);
+
+    // ¡Clave! envia rol_id, no rol
+    if (form.rol && form.rol.id) {
+      formData.append("rol_id", form.rol.id.toString());
+    }
 
     try {
       let resp;
@@ -65,12 +98,10 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       }
-      onSave(resp.data.usuario ?? resp.data);
+      const nuevo = resp.data.user ?? resp.data;
+      onSave(nuevo);
     } catch (err: any) {
-      alert(
-        "Error: " +
-          JSON.stringify(err.response?.data || err.message)
-      );
+      alert("Error: " + JSON.stringify(err.response?.data || err.message));
     }
   };
 
@@ -138,28 +169,54 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
               className="w-full border rounded p-2"
             />
           </div>
+          {/* Contraseña */}
+          <div>
+            <label className="block mb-1">Contraseña</label>
+            <input
+              name="password"
+              type="password"
+              value={form.password ?? ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+          </div>
+          {/* Telefono */}
+          <div>
+            <label className="block mb-1">Teléfono</label>
+            <input
+              name="telefono"
+              value={form.telefono ?? ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+          </div>
           {/* Rol */}
           <div>
             <label className="block mb-1">Rol</label>
             <select
               name="rol"
               value={form.rol.id}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  rol: new Rol({ id: Number(e.target.value), nombre: "" }),
-                }))
-              }
+              onChange={(e) => {
+                const rolId = Number(e.target.value); // Obtener el ID del rol como número
+                const rolNombre = getRolNombreById(rolId).toLowerCase(); // Convertir el nombre a minúsculas
+                setForm({
+                  ...form,
+                  rol: { id: rolId, nombre: rolNombre }, // Solo asignamos id y nombre en minúsculas
+                });
+                console.log("Rol seleccionado:", rolId, rolNombre);
+              }}
               className="w-full border rounded p-2"
             >
               <option value="">— Selecciona —</option>
-              <option value="1">Admin</option>
-              <option value="2">Estudiante</option>
-              <option value="3">Profesor</option>
-              <option value="4">Superadmin</option>
-              <option value="5">Tutor</option>
+              <option value="2">SuperAdmin</option>
+              <option value="3">Admin</option>
+              <option value="4">Estudiante</option>
+              <option value="5">Profesor</option>
+              <option value="6">Tutor</option>
             </select>
           </div>
+
+
           {/* Foto */}
           <div>
             <label className="block mb-1">Foto</label>
@@ -188,6 +245,20 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
               onChange={handleChange}
               className="w-full border rounded p-2"
             />
+          </div>
+          {/* Sexo */}
+          <div>
+            <label className="block mb-1">Sexo</label>
+            <select
+              name="sexo"
+              value={form.sexo}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            >
+              <option value="">— Selecciona —</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-2">
