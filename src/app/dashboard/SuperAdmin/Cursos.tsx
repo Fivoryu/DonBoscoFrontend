@@ -17,8 +17,8 @@ export default function SuperAdminCursos() {
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      AxiosInstance.get<Paralelo[]>("/institucion/paralelos/listar/"),
-      AxiosInstance.get<Curso[]>("/institucion/cursos/listar/")
+      AxiosInstance.get<Paralelo[]>("/academico/paralelos/listar/"),
+      AxiosInstance.get<Curso[]>("/academico/cursos/listar/")
     ])
     .then(([resP, resC]) => {
       setParalelos(resP.data.map((p: any) => ({
@@ -41,7 +41,7 @@ export default function SuperAdminCursos() {
   const handleDelete = async (parId: number) => {
     if (!confirm("¿Eliminar este curso?")) return;
     try {
-      await AxiosInstance.delete(`/institucion/cursos/eliminar/${parId}/`);
+      await AxiosInstance.delete(`/academico/cursos/eliminar/${parId}/`);
       setCursos(prev => prev.filter(c => c.paraleloId !== parId));
     } catch {
       alert("Error al eliminar curso.");

@@ -17,8 +17,8 @@ export default function SuperAdminParalelos() {
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      AxiosInstance.get<Grado[]>("/institucion/grados/listar/"),
-      AxiosInstance.get<Paralelo[]>("/institucion/paralelos/listar/")
+      AxiosInstance.get<Grado[]>("/academico/grados/listar/"),
+      AxiosInstance.get<Paralelo[]>("/academico/paralelos/listar/")
     ])
     .then(([resG, resP]) => {
       setGrados(resG.data.map((g: any) => ({ id: g.id, unidadEducativaId: g.unidad_educativa_fk, nivelEducativo: g.nivel_educativo })));
@@ -33,7 +33,7 @@ export default function SuperAdminParalelos() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este paralelo?")) return;
     try {
-      await AxiosInstance.delete(`/institucion/paralelos/eliminar/${id}/`);
+      await AxiosInstance.delete(`/academico/paralelos/eliminar/${id}/`);
       setParalelos(prev => prev.filter(p => p.id !== id));
     } catch {
       alert("Error al eliminar paralelo.");

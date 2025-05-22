@@ -1,89 +1,101 @@
-import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
-import AxiosInstance from "@/components/AxiosInstance";
-import GradoForm from "./components/GradoForm";
+import { Plus} from "lucide-react";
+import AxiosInstance from "../../../components/AxiosInstance";
+import GradosTable from "./components/GradoTable";
+import GradoFormModal from "./components/GradoForm";
 import { Grado } from "@/app/modelos/Academico";
-import {UnidadEducativa } from "@/app/modelos/Institucion";
-import GradoTable from "./components/GradoTable";
-import { AxiosResponse } from "axios";
+import { UnidadEducativa } from "@/app/modelos/Institucion";
+import { useState, useEffect } from "react";
 
-export default function SuperAdminGrados() {
+export default function AcademicoGrados() {
   const [grados, setGrados] = useState<Grado[]>([]);
-  const [unidadesEducativas, setUnidadesEducativas] = useState<UnidadEducativa[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [unidades, setUnidades] = useState<UnidadEducativa[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<keyof Grado>("nivelEducativo");
+  const [asc, setAsc] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editGrado, setEditGrado] = useState<Grado | null>(null);
 
   useEffect(() => {
-    AxiosInstance.get<Grado[]>("/academico/listar-grados/")
-      .then((res) => setGrados(res.data))
-      .catch(() => alert("No se pudieron cargar los grados."));
-    AxiosInstance.get<UnidadEducativa[]>("/institucion/listar-unidades-educativas/")
-      .then((res) => setUnidadesEducativas(res.data))
-      .catch(() => alert("No se pudieron cargar las unidades educativas."));
+    setLoading(true);
+    Promise.all([
+      AxiosInstance.get<Grado[]>('/academico/listar-grados/'),
+      AxiosInstance.get<UnidadEducativa[]>('/institucion/unidades-educativas/listar/')
+    ])
+    .then(([resG, resU]) => {
+      setGrados(resG.data.map(g => ({
+        id: g.id,
+        nivelEducativo: g.nivelEducativo,
+        unidadEducativaId: g.unidadEducativaId
+      })));
+      setUnidades(resU.data);
+    })
+    .catch(() => setError('No se pudieron cargar grados o unidades.'))
+    .finally(() => setLoading(false));
   }, []);
 
-  const handleSave = async (form: Grado) => {
+  const toggleSort = (key: keyof Grado) => {
+    if (key === sortKey) setAsc(!asc);
+    else { setSortKey(key); setAsc(true); }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('¿Eliminar este grado?')) return;
     try {
-      let res: AxiosResponse<Grado>;
-      if (editGrado) {
-        res = await AxiosInstance.put<Grado>(`/academico/editar-grado/${editGrado.id}/`, form);
-        setGrados((prev) =>
-          prev.map((c) => (c.id === editGrado.id ? res.data : c))
-        );
-      } else {
-        res = await AxiosInstance.post<Grado>("/academico/crear-grado/", form);
-        setGrados((prev) => [...prev, res.data]);
-      }
-      setShowForm(false);
-      setEditGrado(null);
-    } catch (err) {
-      console.error("Error al guardar grado:", err);
-      alert("Ocurrió un error al guardar el grado.");
+      await AxiosInstance.delete(`/academico/eliminar-grado/${id}/`);
+      setGrados(prev => prev.filter(g => g.id !== id));
+    } catch {
+      alert('Error al eliminar grado.');
     }
   };
 
-  const handleDelete = async (gradoId: number) => {
-    if (!confirm("¿Eliminar este grado?")) return;
-    try {
-      await AxiosInstance.delete(`/academico/eliminar-grado/${gradoId}/`);
-      setGrados((prev) => prev.filter((c) => c.id !== gradoId));
-    } catch (err) {
-      console.error("Error al eliminar grado:", err);
-      alert("Error al eliminar el grado.");
+  const handleEdit = (g: Grado | null) => {
+    setEditGrado(g);
+    setModalOpen(true);
+  };
+
+  const handleSave = (updated: Grado) => {
+    if (editGrado) {
+      setGrados(prev => prev.map(g => g.id === updated.id ? updated : g));
+    } else {
+      setGrados(prev => [...prev, updated]);
     }
+    setModalOpen(false);
+    setEditGrado(null);
   };
 
   return (
-    <section className="space-y-6">
+    <section className="p-6 space-y-4">
       <header className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-blue-600">Grados</h2>
+        <h1 className="text-2xl font-bold text-blue-600">Grados</h1>
         <button
-          onClick={() => {
-            setEditGrado(null);
-            setShowForm(true);
-          }}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+          onClick={() => handleEdit(null)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          <Plus className="w-5 h-5" /> Nuevo Grado
+          <Plus className="w-5 h-5" /> Nuevo
         </button>
       </header>
 
-      <GradoTable
-        unidadesEducativas={unidadesEducativas}
-        grados={grados}
-        onEdit={(c) => {
-          setEditGrado(c);
-          setShowForm(true);
-        }}
-        onDelete={handleDelete}
-      />
+      {loading && <div className="text-center">Cargando…</div>}
+      {error && <div className="text-red-600 text-center">{error}</div>}
 
-      {showForm && (
-        <GradoForm
+      {!loading && !error && (
+        <GradosTable
           grados={grados}
-          unidadesEducativas={unidadesEducativas}
-          initial={editGrado ?? undefined}
-          onCancel={() => setShowForm(false)}
+          unidades={unidades}
+          sortKey={sortKey}
+          asc={asc}
+          onToggleSort={toggleSort}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {modalOpen && (
+        <GradoFormModal
+          initial={editGrado}
+          unidades={unidades}
+          onCancel={() => { setModalOpen(false); setEditGrado(null); }}
           onSave={handleSave}
         />
       )}
