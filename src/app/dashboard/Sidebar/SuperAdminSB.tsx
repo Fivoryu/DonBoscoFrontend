@@ -70,6 +70,11 @@ const sections: Array<{
         label: "Profesor",
         icon: UserCheck,
       },
+      {
+        to: "/dashboard/superadmin/grados",
+        label: "Grados",
+        icon: School,
+      },
     ],
   },
   {
