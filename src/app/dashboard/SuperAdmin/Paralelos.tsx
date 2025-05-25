@@ -21,8 +21,14 @@ export default function SuperAdminParalelos() {
       AxiosInstance.get<Paralelo[]>("/academico/paralelos/listar/")
     ])
     .then(([resG, resP]) => {
-      setGrados(resG.data.map((g: any) => ({ id: g.id, unidadEducativaId: g.unidad_educativa_fk, nivelEducativo: g.nivel_educativo })));
-      setParalelos(resP.data.map((p: any) => ({ id: p.id, gradoId: p.grado_fk, letra: p.letra, capacidadMaxima: p.capacidad_maxima })));
+      setGrados(resG.data.map((g: any) => ({
+        id: g.id,
+        unidad_educativa: g.unidad_educativa,
+        nivel_educativo: g.nivel_educativo,
+        numero: g.numero,
+        nombre: g.nombre,
+      })));
+      setParalelos(resP.data.map((p: any) => ({ id: p.id, grado: p.grado, letra: p.letra })));
     })
     .catch(() => setError("No se pudieron cargar grados o paralelos."))
     .finally(() => setLoading(false));
@@ -33,7 +39,7 @@ export default function SuperAdminParalelos() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este paralelo?")) return;
     try {
-      await AxiosInstance.delete(`/academico/paralelos/eliminar/${id}/`);
+      await AxiosInstance.delete(`/academico/paralelos/${id}/eliminar/`);
       setParalelos(prev => prev.filter(p => p.id !== id));
     } catch {
       alert("Error al eliminar paralelo.");
@@ -48,6 +54,8 @@ export default function SuperAdminParalelos() {
     setModalOpen(false);
     setEditParalelo(null);
   };
+
+  
 
   return (
     <section className="p-6 space-y-4">
@@ -74,6 +82,7 @@ export default function SuperAdminParalelos() {
         <ParaleloFormModal
           initial={editParalelo}
           grados={grados}
+          paralelos={paralelos}
           onCancel={() => { setModalOpen(false); setEditParalelo(null); }}
           onSave={handleSave}
         />

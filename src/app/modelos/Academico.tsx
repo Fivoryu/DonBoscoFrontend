@@ -1,3 +1,5 @@
+import { UnidadEducativa } from "./Institucion";
+
 /**
  * Clase: relación entre Curso y Aula
  */
@@ -14,8 +16,10 @@ export type NivelEducativo = 'INI' | 'PRI' | 'SEC';
 
 export interface Grado {
   id: number;
-  unidadEducativaId: number;
-  nivelEducativo: NivelEducativo;
+  nivel_educativo: string;
+  numero: number;
+  unidad_educativa: UnidadEducativa;
+  nombre: string;
 }
 
 /**
@@ -23,9 +27,8 @@ export interface Grado {
  */
 export interface Paralelo {
   id: number;
-  gradoId: number;
+  grado: Grado | number;
   letra: string;
-  capacidadMaxima: number;
 }
 
 /**

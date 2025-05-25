@@ -10,7 +10,7 @@ interface Props {
 
 export default function FormModulo({ colegios, initial, onSave, onCancel }: Props) {
   const [f, setF] = useState<Modulo>(
-    initial ?? { id: 0, colegioId: 0, nombre: "", cantidadAulas: 0 }
+    initial ?? { id: 0, colegioId: 0, nombre: "", cantidadAulas: 0, pisos: 0 }
   );
 
   const handleSave = () => {

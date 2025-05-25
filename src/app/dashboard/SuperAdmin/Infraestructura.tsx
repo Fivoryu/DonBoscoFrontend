@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import AxiosInstance from "@/components/AxiosInstance";
@@ -30,6 +31,7 @@ export default function SuperAdminInfraestructura() {
             colegioId: m.colegio_fk,
             nombre: m.nombre,
             cantidadAulas: m.cantidad_aulas,
+            pisos: m.pisos
           }))
         )
       )
@@ -53,8 +55,10 @@ export default function SuperAdminInfraestructura() {
           cantidad_aulas: m.cantidadAulas,
           colegio_fk: m.colegioId,
         });
+        console.log(res)
   
         // Actualizar en el estado local
+        /*
         setModulos((prev) =>
           prev.map((x) =>
             x.id === m.id
@@ -66,7 +70,7 @@ export default function SuperAdminInfraestructura() {
                 }
               : x
           )
-        );
+        );*/
         alert("Módulo actualizado exitosamente.");
       } else {
         // ── CREAR ──
@@ -80,8 +84,10 @@ export default function SuperAdminInfraestructura() {
           cantidad_aulas: m.cantidadAulas,
           colegio_fk: m.colegioId,
         });
+        console.log(res);
   
         // Añadir al estado local
+        /*
         setModulos((prev) => [
           ...prev,
           {
@@ -91,6 +97,7 @@ export default function SuperAdminInfraestructura() {
             colegioId: res.data.colegio_fk,
           },
         ]);
+        */
         alert("Módulo creado exitosamente.");
       }
   
@@ -157,7 +164,7 @@ export default function SuperAdminInfraestructura() {
           Infraestructura
         </h2>
         <button
-          onClick={() => setModalMod({ id: 0, colegioId: 0, nombre: "", cantidadAulas: 0 })}
+          onClick={() => setModalMod({ id: 0, colegioId: 0, nombre: "", cantidadAulas: 0, pisos: 0 })}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
         >
           <Plus className="w-5 h-5" /> Nuevo módulo

@@ -26,9 +26,6 @@ AxiosInstance.interceptors.request.use((config) => {
     config.headers["X-CSRFToken"] = csrfToken;
   }
 
-  console.log("Token:", token);
-  console.log("Token CSRF:", csrfToken);
-
   return config;
 });
 

@@ -1,6 +1,7 @@
 import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
 import { Paralelo, Grado } from "@/app/modelos/Academico";
 import { useMemo, useState } from "react";
+import Table from "@/components/Table";
 
 interface Props {
   paralelos: Paralelo[];
@@ -13,9 +14,8 @@ interface Props {
 }
 
 const colsP: Array<[keyof Paralelo, string]> = [
-  ["gradoId", "Grado"],
+  ["grado", "Grado"],
   ["letra", "Paralelo"],
-  ["capacidadMaxima", "Capacidad"],
 ];
 
 export default function ParalelosTable({ paralelos, grados, sortKey, asc, onToggleSort, onEdit, onDelete }: Props) {
@@ -25,8 +25,13 @@ export default function ParalelosTable({ paralelos, grados, sortKey, asc, onTogg
     const t = search.trim().toLowerCase();
     if (!t) return paralelos;
     return paralelos.filter(p => {
-      const grado = grados.find(g => g.id === p.gradoId);
-      return p.letra.toLowerCase().includes(t) || grado?.nivelEducativo.toLowerCase().includes(t);
+      const grado = grados.find(g => 
+        typeof p.grado === "object" && p.grado !== null
+          ? g.id === p.grado.id
+          : g.id === p.grado
+      );
+      console.log(grados)
+      return p.letra.toLowerCase().includes(t) || grado?.nivel_educativo.toLowerCase().includes(t);
     });
   }, [search, paralelos, grados]);
 
@@ -39,6 +44,10 @@ export default function ParalelosTable({ paralelos, grados, sortKey, asc, onTogg
     }),
     [filtered, sortKey, asc]
   );
+  
+  console.log(grados)
+  console.log(paralelos)
+
 
   return (
     <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -51,7 +60,7 @@ export default function ParalelosTable({ paralelos, grados, sortKey, asc, onTogg
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
-      <table className="table-auto w-full text-sm whitespace-nowrap">
+      <Table> 
         <thead className="bg-blue-50 text-blue-600 select-none">
           <tr>
             {colsP.map(([key, label]) => {
@@ -79,15 +88,19 @@ export default function ParalelosTable({ paralelos, grados, sortKey, asc, onTogg
             </tr>
           ) : (
             sorted.map(p => {
-              const grado = grados.find(g => g.id === p.gradoId);
+              const grado = grados.find(g => 
+                typeof p.grado === "object" && p.grado !== null
+                  ? g.id === p.grado.id
+                  : g.id === p.grado
+              );
               return (
                 <tr key={p.id} className="hover:bg-blue-50">
-                  <td className="px-4 py-3">{grado?.nivelEducativo ?? "–"}</td>
+                  <td className="px-4 py-3">{grado?.nombre ?? "–"}</td>
                   <td className="px-4 py-3">{p.letra}</td>
-                  <td className="px-4 py-3">{p.capacidadMaxima}</td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => onEdit(p)} className="mr-2 text-blue-600 hover:underline">
                       <Pencil className="w-4 h-4" />
+                      
                     </button>
                     <button onClick={() => onDelete(p.id)} className="text-red-600 hover:underline">
                       <Trash className="w-4 h-4" />
@@ -98,7 +111,7 @@ export default function ParalelosTable({ paralelos, grados, sortKey, asc, onTogg
             })
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 }

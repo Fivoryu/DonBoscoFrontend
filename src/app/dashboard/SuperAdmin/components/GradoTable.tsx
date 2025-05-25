@@ -2,6 +2,7 @@ import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
 import { Grado } from "@/app/modelos/Academico";
 import { UnidadEducativa } from "@/app/modelos/Institucion";
 import { useMemo, useState } from "react";
+import Table from "@/components/Table";
 
 interface Props {
   grados: Grado[];
@@ -13,32 +14,44 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
-const cols: Array<[keyof Grado, string]> = [
-  ["nivelEducativo", "Nivel"],
-  ["unidadEducativaId", "Unidad Educativa"]
+const cols: Array<[keyof Grado | 'colegio', string]> = [
+  ['colegio', 'Colegio'],
+  ['unidad_educativa', 'Unidad Educativa'],
+  ['nivel_educativo', 'Nivel'],
+  ['numero', 'Número'],
+  ['nombre', 'Nombre'],
 ];
 
-export default function GradosTable({ grados, unidades, sortKey, asc, onToggleSort, onEdit, onDelete }: Props) {
+export default function GradosTable({
+  grados,
+  unidades,
+  sortKey,
+  asc,
+  onToggleSort,
+  onEdit,
+  onDelete
+}: Props) {
   const [search, setSearch] = useState("");
 
+  // Filtrado por nivel o nombre de unidad educativa
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return grados;
     return grados.filter(g =>
-      g.nivelEducativo.toLowerCase().includes(term) ||
-      (unidades.find(u => u.id === g.unidadEducativaId)?.nombre?.toLowerCase() ?? "").includes(term)
+      g.nivel_educativo.toLowerCase().includes(term) ||
+      (unidades.find(u => u.id === (typeof g.unidad_educativa === "number" ? g.unidad_educativa : g.unidad_educativa.id))?.nombre?.toLowerCase() ?? "").includes(term)
     );
   }, [search, grados, unidades]);
 
-  const sorted = useMemo(
-    () => [...filtered].sort((a, b) => {
+  // Ordenamiento dinámico
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
       const A = a[sortKey] as any;
       const B = b[sortKey] as any;
       if (A === B) return 0;
       return asc ? (A > B ? 1 : -1) : (A < B ? 1 : -1);
-    }),
-    [filtered, sortKey, asc]
-  );
+    });
+  }, [filtered, sortKey, asc]);
 
   return (
     <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -51,15 +64,16 @@ export default function GradosTable({ grados, unidades, sortKey, asc, onToggleSo
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
-      <table className="table-auto w-full text-sm whitespace-nowrap">
+      <Table>
         <thead className="bg-blue-50 text-blue-600 select-none">
           <tr>
             {cols.map(([key, label]) => {
               const active = sortKey === key;
+              const isGradoKey = key !== "colegio";
               return (
                 <th
                   key={key}
-                  onClick={() => onToggleSort(key)}
+                  onClick={isGradoKey ? () => onToggleSort(key as keyof Grado) : undefined}
                   className="px-4 py-3 text-left cursor-pointer"
                 >
                   <span className="inline-flex items-center gap-1">
@@ -79,11 +93,17 @@ export default function GradosTable({ grados, unidades, sortKey, asc, onToggleSo
             </tr>
           ) : (
             sorted.map(g => {
-              const unidad = unidades.find(u => u.id === g.unidadEducativaId);
+              const unidad = g.unidad_educativa;
+              const colegioNombre = unidad?.colegio?.nombre ?? '-';
+              const unidadNombre = unidad?.nombre ?? '-';
+
               return (
                 <tr key={g.id} className="hover:bg-blue-50">
-                  <td className="px-4 py-3">{g.nivelEducativo}</td>
-                  <td className="px-4 py-3">{unidad?.nombre ?? "–"}</td>
+                  <td className="px-4 py-3">{colegioNombre}</td>
+                  <td className="px-4 py-3">{unidadNombre}</td>
+                  <td className="px-4 py-3">{g.nivel_educativo}</td>
+                  <td className="px-4 py-3">{g.numero}</td>
+                  <td className="px-4 py-3">{g.nombre ?? "–"}</td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => onEdit(g)} className="mr-2 text-blue-600 hover:underline">
                       <Pencil className="w-4 h-4" />
@@ -97,7 +117,7 @@ export default function GradosTable({ grados, unidades, sortKey, asc, onToggleSo
             })
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 }

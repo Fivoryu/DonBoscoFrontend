@@ -4,6 +4,8 @@ import CursoFormModal from "./components/CursoFormModal";
 import { Curso, Paralelo } from "@/app/modelos/Academico";
 import { useState, useEffect } from "react";
 
+
+
 export default function SuperAdminCursos() {
   const [paralelos, setParalelos] = useState<Paralelo[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
@@ -23,13 +25,14 @@ export default function SuperAdminCursos() {
     .then(([resP, resC]) => {
       setParalelos(resP.data.map((p: any) => ({
         id: p.id,
-        gradoId: p.grado_fk,
-        letra: p.letra,
-        capacidadMaxima: p.capacidad_maxima
+        grado: p.grado_fk,
+        letra: p.letra
       })));
       setCursos(resC.data.map((c: any) => ({
-        paraleloId: c.paralelo_fk,
-        nombre: c.nombre
+        paraleloId: c.paralelo,
+        nombre: c.nombre,
+        unidadEducativa: c.unidad_educativa,
+        unidadEducativaNombre: c.unidad_educativa_nombre
       })));
     })
     .catch(() => setError("No se pudieron cargar paralelos o cursos."))
@@ -57,6 +60,7 @@ export default function SuperAdminCursos() {
     setEditCurso(null);
   };
 
+  console.log("cursos", cursos);
   return (
     <section className="p-6 space-y-4">
       <header className="flex justify-between items-center">

@@ -20,6 +20,7 @@ const cols: Array<[keyof Curso, string]> = [
 export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleSort, onEdit, onDelete }: Props) {
   const [search, setSearch] = useState("");
 
+
   const filtered = useMemo(() => {
     const t = search.trim().toLowerCase();
     if (!t) return cursos;
@@ -98,6 +99,7 @@ export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleS
             })
           )}
         </tbody>
+
       </table>
     </div>
   );

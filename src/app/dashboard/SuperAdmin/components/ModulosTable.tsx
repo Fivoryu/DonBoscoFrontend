@@ -1,23 +1,25 @@
-import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
+import { ChevronUp, ChevronDown, Pencil, Trash, CheckCircle, XCircle } from "lucide-react";
 import { Modulo, Colegio } from "@/app/modelos/Institucion";
 import { useMemo, useState } from "react";
 import { getColegioName } from "../utils/getColegioName";
+import Table from "@/components/Table";
 
 interface Props {
   modulos: Modulo[];
   colegios: Colegio[];
-  sortKey: keyof Modulo;
+  sortKey: keyof Modulo | 'aulasOcupadas' | 'pisos';
   asc: boolean;
-  onToggleSort: (k: keyof Modulo) => void;
+  onToggleSort: (k: keyof Modulo | 'aulasOcupadas' | 'pisos') => void;
   onEdit: (m: Modulo) => void;
   onDelete: (id: number) => void;
 }
 
-const cols: Array<[keyof Modulo, string]> = [
-  ["colegioId", "Colegio"],
+const cols: Array<[keyof Modulo | 'aulasOcupadas' | 'pisos', string]> = [
   ["nombre", "Nombre"],
-  ["cantidadAulas", "Nº Aulas"],
+  ["cantidadAulas", "Cantidad Aulas"],
+  ["pisos", "Número de pisos"],
   ["descripcion", "Descripción"],
+  ["colegioId", "Colegio"],
 ];
 
 export default function ModulosTable({
@@ -36,13 +38,31 @@ export default function ModulosTable({
     if (!t) return modulos;
     return modulos.filter((m) => m.nombre.toLowerCase().includes(t));
   }, [search, modulos]);
-  
 
   const sorted = useMemo(
     () =>
       [...filtered].sort((a, b) => {
-        const A = a[sortKey] as any;
-        const B = b[sortKey] as any;
+        let A: string | number = "";
+        let B: string | number = "";
+
+        if (sortKey === "pisos") {
+          A = (a as any).pisos ?? 0;
+          B = (b as any).pisos ?? 0;
+        } else if (sortKey === "aulasOcupadas") {
+          A = (a as any).aulasOcupadas ?? 0;
+          B = (b as any).aulasOcupadas ?? 0;
+        } else {
+          const aValue = a[sortKey as keyof Modulo];
+          const bValue = b[sortKey as keyof Modulo];
+          // If value is an object (e.g., Colegio), convert to string (e.g., id or name)
+          A = typeof aValue === "object" && aValue !== null
+            ? (aValue.hasOwnProperty("nombre") ? (aValue as any).nombre : JSON.stringify(aValue))
+            : (aValue ?? "");
+          B = typeof bValue === "object" && bValue !== null
+            ? (bValue.hasOwnProperty("nombre") ? (bValue as any).nombre : JSON.stringify(bValue))
+            : (bValue ?? "");
+        }
+
         if (A === B) return 0;
         return asc ? (A > B ? 1 : -1) : (A < B ? 1 : -1);
       }),
@@ -60,7 +80,7 @@ export default function ModulosTable({
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
-      <table className="table-auto w-full text-sm whitespace-nowrap">
+      <Table>
         <thead className="bg-blue-50 text-blue-600 select-none">
           <tr>
             {cols.map(([key, label]) => {
@@ -96,10 +116,28 @@ export default function ModulosTable({
           ) : (
             sorted.map((m) => (
               <tr key={m.id} className="hover:bg-blue-50">
-                <td className="px-4 py-3">{getColegioName(m, colegios)}</td>
                 <td className="px-4 py-3">{m.nombre}</td>
-                <td className="px-4 py-3">{m.cantidadAulas}</td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-gray-800">
+                      {m.aulasOcupadas ?? 0} / {m.cantidadAulas}
+                    </span>
+                    {m.aulasDisponibles! > 0 ? (
+                      <span className="flex items-center gap-1 text-green-600 font-medium text-sm">
+                        <CheckCircle className="w-4 h-4" />
+                        {m.aulasDisponibles} disponibles
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-red-600 font-medium text-sm">
+                        <XCircle className="w-4 h-4" />
+                        Módulo lleno
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3">{m.pisos}</td>
                 <td className="px-4 py-3">{m.descripcion}</td>
+                <td className="px-4 py-3">{getColegioName(m, colegios)}</td>
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => onEdit(m)}
@@ -118,7 +156,7 @@ export default function ModulosTable({
             ))
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 }

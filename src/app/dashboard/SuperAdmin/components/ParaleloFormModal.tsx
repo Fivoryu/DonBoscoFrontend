@@ -1,95 +1,107 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
 import AxiosInstance from "@/components/AxiosInstance";
 import { Paralelo, Grado } from "@/app/modelos/Academico";
+import FormModal from "@/components/FormModal";
 
 interface Props {
   initial: Paralelo | null;
   grados: Grado[];
+  paralelos: Paralelo[];
   onCancel: () => void;
   onSave: (p: Paralelo) => void;
 }
 
-export default function ParaleloFormModal({ initial, grados, onCancel, onSave }: Props) {
+export default function ParaleloFormModal({ initial, grados, paralelos, onCancel, onSave }: Props) {
   const [form, setForm] = useState<Paralelo>(
-    initial ?? { id: 0, gradoId: 0, letra: "", capacidadMaxima: 0 }
+    initial ?? (grados.length > 0 ? { id: 0, grado: grados[0], letra: "" } : { id: 0, grado: 0, letra: "" })
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.currentTarget;
     setForm(f => ({
       ...f,
-      [name]: name === 'gradoId' || name === 'capacidadMaxima' ? Number(value) : value
+      [name]: name === "grado" ? 
+        (value === "" ? null : grados.find(g => g.id === Number(value)) ?? null)
+        : value
     }));
   };
 
   const handleSubmit = async () => {
+    if (!form.grado || typeof form.grado === "number") {
+      alert("Debes seleccionar un grado válido.");
+      return;
+    }
+
+    const gradoId = form.grado.id;
+
+    const existe = paralelos.some(p =>
+      (typeof p.grado === "object" ? p.grado.id : p.grado) === gradoId &&
+      p.letra.toLowerCase() === form.letra.toLowerCase() &&
+      p.id !== form.id
+    );
+
+    if (existe) {
+      alert(`El paralelo "${form.letra}" ya existe para ese grado.`);
+      return;
+    }
+
     try {
+      const payload = {
+        grado: gradoId,
+        letra: form.letra,
+      };
+
       let resp;
       if (initial) {
-        resp = await AxiosInstance.put(
-          `/institucion/paralelos/editar/${form.id}/`,
-          { grado_fk: form.gradoId, letra: form.letra, capacidad_maxima: form.capacidadMaxima }
-        );
+        resp = await AxiosInstance.put(`/academico/paralelos/editar/${form.id}/`, payload);
       } else {
-        resp = await AxiosInstance.post(
-          `/institucion/paralelos/crear/`,
-          { grado_fk: form.gradoId, letra: form.letra, capacidad_maxima: form.capacidadMaxima }
-        );
+        resp = await AxiosInstance.post(`/academico/paralelos/crear/`, payload);
       }
-      onSave(resp.data);
+
+      const saved: Paralelo = {
+        id: resp.data.id,
+        grado: resp.data.grado,
+        letra: resp.data.letra,
+      };
+
+      onSave(saved);
     } catch (err: any) {
       alert("Error: " + JSON.stringify(err.response?.data || err.message));
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg relative">
-        <button onClick={onCancel} className="absolute top-3 right-3 p-1 text-gray-500 hover:text-gray-700">
-          <X className="w-5 h-5" />
-        </button>
-        <h2 className="text-xl font-bold mb-4">{initial ? "Editar Paralelo" : "Nuevo Paralelo"}</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block mb-1">Grado</label>
-            <select
-              name="gradoId"
-              value={form.gradoId}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            >
-              <option value={0} disabled>Selecciona un grado</option>
-              {grados.map(g => (
-                <option key={g.id} value={g.id}>{g.nivelEducativo}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block mb-1">Letra</label>
-            <input
-              name="letra"
-              value={form.letra}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Capacidad Máxima</label>
-            <input
-              type="number"
-              name="capacidadMaxima"
-              value={form.capacidadMaxima}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-        </div>
-        <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onCancel} className="px-4 py-2 border rounded">Cancelar</button>
-          <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded">Guardar</button>
-        </div>
+    <FormModal
+      title={initial ? "Editar Paralelo" : "Nuevo Paralelo"}
+      onCancel={onCancel}
+      onSubmit={handleSubmit}
+    >
+      <div className="mb-4">
+        <label className="block mb-1">Grado</label>
+        <select
+          name="grado"
+          value={typeof form.grado === "object" && form.grado !== null ? form.grado.id : ""}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        >
+          <option value="">Selecciona un grado</option>
+          {grados.map(g => (
+            <option key={g.id} value={g.id}>
+              {g.nombre}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
+      <div>
+        <label className="block mb-1">Letra</label>
+        <input
+          name="letra"
+          value={form.letra}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          autoFocus
+        />
+      </div>
+    </FormModal>
   );
 }

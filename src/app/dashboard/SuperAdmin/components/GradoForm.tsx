@@ -1,73 +1,205 @@
-import React, { useState } from "react";
-import { X } from "lucide-react";
-import AxiosInstance from "@/components/AxiosInstance";
+import React, { useState, useEffect } from "react";
+import FormModal from "@/components/FormModal";
 import { Grado } from "@/app/modelos/Academico";
-import { UnidadEducativa } from "@/app/modelos/Institucion";
+import { UnidadEducativa, Colegio } from "@/app/modelos/Institucion";
 
 interface Props {
   initial: Grado | null;
   unidades: UnidadEducativa[];
+  colegios: Colegio[];
   onCancel: () => void;
-  onSave: (g: Grado) => void;
+  onSave: (grado: Grado) => void;
 }
 
-export default function GradoFormModal({ initial, unidades, onCancel, onSave }: Props) {
+
+const sufijos: Record<number, string> = { 1: "ro", 2: "do", 3: "ro", 4: "to", 5: "to", 6: "to" };
+
+function generarNombreGrado(nivel: string, numero: number): string {
+  const niveles: Record<string, string> = {
+    INI: "Inicial",
+    PRI: "Primaria",
+    SEC: "Secundaria",
+  };
+  const suf = sufijos[numero] || "°";
+  const nombreNivel = niveles[nivel] ?? nivel;
+  return `${numero}${suf} de ${nombreNivel}`;
+}
+
+export default function GradoFormModal({ initial, unidades, colegios, onCancel, onSave }: Props) {
   const [form, setForm] = useState<Grado>(
-    initial ?? { id: 0, nivelEducativo: 'INI', unidadEducativaId: 0 }
+    initial ?? { id: 0, nivel_educativo: "PRI", unidad_educativa: null as unknown as UnidadEducativa, numero: 1, nombre: "" }
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.currentTarget;
-    setForm(f => ({ ...f, [name]: name === 'unidadEducativaId' ? Number(value) : value }));
-  };
+  const [colegioId, setColegioId] = useState<number | null>(null);
+  const [unidadesFiltradas, setUnidadesFiltradas] = useState<UnidadEducativa[]>([]);
 
-  const handleSubmit = async () => {
-    try {
-      let resp;
-      const payload = { nivel_educativo: form.nivelEducativo, unidad_educativa: form.unidadEducativaId };
-      if (form.id) {
-        resp = await AxiosInstance.put(`/academico/editar-grado/${form.id}/`, payload);
-      } else {
-        resp = await AxiosInstance.post(`/academico/crear-grado/`, payload);
-      }
-      onSave(resp.data);
-    } catch (err: any) {
-      alert("Error: " + JSON.stringify(err.response?.data || err.message));
+  // Cuando cambia el colegio, actualiza unidades y unidad seleccionada si no pertenece
+  const handleColegioChange = (id: number) => {
+    setColegioId(id);
+    const nuevasUnidades = unidades.filter((u) => u.colegio?.id === id);
+    setUnidadesFiltradas(nuevasUnidades);
+
+    if (!nuevasUnidades.some((u) => u.id === Number(form.unidad_educativa))) {
+      setForm((f) => ({ ...f, unidad_educativa: null as unknown as UnidadEducativa }));
     }
   };
 
+  // Cuando cambia la unidad educativa, actualiza colegio, nivel y unidad
+  const handleUnidadChange = (id: number) => {
+    const unidad = unidades.find(u => u.id === id);
+    if (unidad) {
+      setForm(f => ({
+        ...f,
+        unidad_educativa: unidad,
+        nivel_educativo: unidad.nivel || f.nivel_educativo, // actualiza nivel educativo
+      }));
+
+      // También si manejas colegioId separado, actualízalo aquí
+      setColegioId(unidad.colegio?.id ?? null);
+    }
+  };
+
+  // Maneja cambios de nivel y número de grado y unidad educativa desde selects
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.currentTarget;
+    if (name === "unidad_educativa") {
+      handleUnidadChange(Number(value));
+    } else if (name === "colegio") {
+      handleColegioChange(Number(value));
+    } else {
+      setForm((f) => ({
+        ...f,
+        [name]: name === "numero" ? Number(value) : value,
+      }));
+    }
+  };
+
+  // Genera nombre automáticamente cuando cambia nivel o número
+  useEffect(() => {
+    const nombre = generarNombreGrado(form.nivel_educativo, form.numero);
+    setForm((f) => ({ ...f, nombre }));
+  }, [form.nivel_educativo, form.numero]);
+
+  // Inicializa unidades filtradas y colegio al cargar o cambiar unidad educativa
+  useEffect(() => {
+    if (initial) {
+      const unidad = unidades.find((u) => u.id === Number(initial.unidad_educativa));
+      if (unidad && unidad.colegio) {
+        setColegioId(unidad.colegio.id);
+        setUnidadesFiltradas(unidades.filter((u) => u.colegio?.id === unidad.colegio?.id));
+      }
+    } else {
+      setUnidadesFiltradas([]);
+      setColegioId(null);
+    }
+  }, [initial, unidades]);
+
+  const handleSubmit = () => {
+    if (!form.unidad_educativa) {
+      alert("Seleccione una unidad educativa.");
+      return;
+    }
+    if (!form.nivel_educativo) {
+      alert("Seleccione un nivel educativo.");
+      return;
+    }
+    if (!form.numero) {
+      alert("Seleccione un número de grado.");
+      return;
+    }
+
+    const nivelMap: Record<string, string> = {
+      Inicial: 'INI',
+      Primaria: 'PRI',
+      Secundaria: 'SEC',
+    };
+
+    // Busca el nombre largo del nivel según la unidad educativa seleccionada
+    const unidad = unidades.find(u => u.id === Number(form.unidad_educativa));
+    const nivelNombre = unidad?.nivel || ''; // Por ejemplo: "Primaria"
+
+    // Convierte al código esperado
+    const nivelCorto = nivelMap[nivelNombre] || form.nivel_educativo;
+
+    // Prepara el objeto a enviar con el nivel corto correcto
+    const payload = {
+      ...form,
+      nivel_educativo: nivelCorto,
+    };
+
+    onSave(payload);
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg relative">
-        <button onClick={onCancel} className="absolute top-3 right-3 p-1 text-gray-500 hover:text-gray-700">
-          <X className="w-5 h-5" />
-        </button>
-        <h2 className="text-xl font-bold mb-4">{form.id ? "Editar Grado" : "Nuevo Grado"}</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block mb-1">Nivel Educativo</label>
-            <select name="nivelEducativo" value={form.nivelEducativo} onChange={handleChange} className="w-full border rounded p-2">
-              <option value="">Seleccione un nivel</option>
-              <option value="INI">Inicial</option>
-              <option value="PRI">Primaria</option>
-              <option value="SEC">Secundaria</option>
-            </select>
-          </div>
-          <div>
-            <label className="block mb-1">Unidad Educativa</label>
-            <select name="unidadEducativaId" value={form.unidadEducativaId} onChange={handleChange} className="w-full border rounded p-2">
-              <option value={0} disabled>Seleccione unidad</option>
-              {unidades.map(u => (
-                <option key={u.id} value={u.id}>{u.nombre}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onCancel} className="px-4 py-2 border rounded">Cancelar</button>
-          <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded">Guardar</button>
-        </div>
+    <FormModal title={form.id ? "Editar Grado" : "Nuevo Grado"} onCancel={onCancel} onSubmit={handleSubmit}>
+      <div>
+        <label className="block mb-1">Colegio</label>
+        <select value={colegioId ?? ""} onChange={handleChange} name="colegio" className="w-full border rounded p-2">
+          <option value="" disabled>
+            Seleccione colegio
+          </option>
+          {colegios.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
+
+      <div>
+        <label className="block mb-1">Unidad Educativa</label>
+        <select
+          name="unidad_educativa"
+          value={Number(form.unidad_educativa)}
+          onChange={e => handleUnidadChange(Number(e.target.value))}
+          className="w-full border rounded p-2"
+        >
+          <option value={0} disabled>Seleccione unidad</option>
+          {unidadesFiltradas.map(u => (
+            <option key={u.id} value={u.id}>{u.nombre}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block mb-1">Nivel Educativo</label>
+        <input
+          type="text"
+          value={
+            form.unidad_educativa
+              ? unidades.find(u => u.id === Number(form.unidad_educativa))?.nivel || ""
+              : ""
+          }
+          readOnly
+          className="w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
+        />
+      </div>
+
+      <div>
+        <label className="block mb-1">Número de Grado</label>
+        <select
+          name="numero"
+          value={form.numero}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        >
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <option key={n} value={n}>
+              {n === 1 ? "1ro" : n === 2 ? "2do" : n === 3 ? "3ro" : `${n}to`}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block mb-1">Nombre completo</label>
+        <input
+          type="text"
+          value={form.nombre}
+          readOnly
+          className="w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
+        />
+      </div>
+    </FormModal>
   );
 }

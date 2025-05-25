@@ -1,7 +1,18 @@
-import { ChevronUp, ChevronDown } from "lucide-react";
-import { Aula, Modulo } from "@/app/modelos/Institucion";
+import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
+import { Aula, Modulo, TipoAula } from "@/app/modelos/Institucion";
 import { useMemo, useState } from "react";
 import { getModuloFromAula } from "../utils/getModuloFromAula";
+import Table from "@/components/Table";
+
+const TIPO_LABELS: Record<TipoAula, string> = {
+  AUL: 'Aula Regular',
+  LAB: 'Laboratorio',
+  TAL: 'Taller',
+  AUD: 'Auditorio',
+  COM: 'Sala de Computación',
+  GIM: 'Gimnasio',
+  BIB: 'Biblioteca',
+};
 
 interface Props {
   aulas: Aula[];
@@ -18,6 +29,8 @@ const columnas: Array<[keyof Aula, string]> = [
   ["nombre", "Nombre"],
   ["capacidad", "Capacidad"],
   ["tipo", "Tipo"],
+  ["piso", "Piso"],
+  ["equipamiento", "Equipamiento"],
 ];
 
 export default function AulasTable({ aulas, modulos, sortKey, asc, onToggleSort, onEdit, onDelete }: Props) {
@@ -52,7 +65,7 @@ export default function AulasTable({ aulas, modulos, sortKey, asc, onToggleSort,
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
-      <table className="table-auto w-full text-sm whitespace-nowrap">
+      <Table>
         <thead className="bg-blue-50 text-blue-600 select-none">
           <tr>
             {columnas.map(([key, label]) => {
@@ -79,19 +92,25 @@ export default function AulasTable({ aulas, modulos, sortKey, asc, onToggleSort,
           ) : (
             sorted.map(a => (
               <tr key={a.id} className="hover:bg-blue-50">
-                <td className="px-4 py-3">{getModuloFromAula(a, modulos)?.nombre}</td>
+                <td className="px-4 py-3">{getModuloFromAula(a, modulos)?.nombre || '-'}</td>
                 <td className="px-4 py-3">{a.nombre}</td>
                 <td className="px-4 py-3">{a.capacidad}</td>
-                <td className="px-4 py-3">{a.tipo}</td>
+                <td className="px-4 py-3">{TIPO_LABELS[a.tipo]}</td>
+                <td className="px-4 py-3">{a.piso ?? '-'}</td>
+                <td className="px-4 py-3">{a.equipamiento || '-'}</td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => onEdit(a)} className="mr-2 text-blue-600 hover:underline">Editar</button>
-                  <button onClick={() => onDelete(a.id)} className="text-red-600 hover:underline">Eliminar</button>
+                  <button onClick={() => onEdit(a)} className="mr-2 text-blue-600 hover:underline">
+                    <Pencil />
+                  </button>
+                  <button onClick={() => onDelete(a.id)} className="text-red-600 hover:underline">
+                    <Trash />
+                  </button>
                 </td>
               </tr>
             ))
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 }

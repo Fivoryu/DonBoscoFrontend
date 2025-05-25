@@ -16,9 +16,13 @@ export interface Colegio {
 export interface Modulo {
   id: number;
   nombre: string;
+  pisos: number;
   cantidadAulas: number;
+  aulasOcupadas?: number;
+  aulasDisponibles?: number;    // ← nuevo
   descripcion?: string | null;
   colegioId?: number | null;
+  colegio?: Colegio;
 }
 
 /** Tipos disponibles para Aula */

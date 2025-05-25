@@ -1,4 +1,4 @@
-import AxiosInstance from "../../../components/AxiosInstance";
+import AxiosInstance from "@/components/AxiosInstance";
 import AulasTable from "./components/AulasTable";
 import AulaFormModal from "./components/AulasFormModal";
 import { Aula, Modulo } from "@/app/modelos/Institucion";
@@ -21,12 +21,35 @@ export default function SuperAdminAulas() {
     Promise.all([
       AxiosInstance.get<Modulo[]>('/institucion/modulos/listar/'),
       AxiosInstance.get<Aula[]>('/institucion/aulas/listar/')
-    ]).then(([resM, resA]) => {
-      setModulos(resM.data);
-      setAulas(resA.data);
-    })
-    .catch(() => setError('No se pudieron cargar las aulas o módulos.'))
-    .finally(() => setLoading(false));
+    ])
+      .then(([resM, resA]) => {
+        // Mapear snake_case a camelCase y conservar el objeto colegio
+        const mappedModulos: Modulo[] = resM.data.map((m: any) => ({
+          id: m.id,
+          nombre: m.nombre,
+          descripcion: m.descripcion,
+          pisos: m.pisos,
+          cantidadAulas: m.cantidad_aulas,
+          aulasOcupadas: m.aulas_ocupadas,
+          aulasDisponibles: m.aulas_disponibles,
+          colegioId: m.colegioId,
+          colegio: m.colegio
+        }));
+
+        setModulos(mappedModulos);
+        setAulas(resA.data.map((a: any) => ({
+          id: a.id,
+          moduloId: a.modulo?.id ?? null,
+          nombre: a.nombre,
+          capacidad: a.capacidad,
+          estado: a.estado,
+          tipo: a.tipo,
+          piso: a.piso,
+          equipamiento: a.equipamiento
+        })));
+      })
+      .catch(() => setError('No se pudieron cargar aulas o módulos.'))
+      .finally(() => setLoading(false));
   }, []);
 
   const toggleSort = (key: keyof Aula) => {
@@ -40,7 +63,7 @@ export default function SuperAdminAulas() {
   const handleDelete = async (id: number) => {
     if (!confirm('¿Eliminar esta aula?')) return;
     try {
-      await AxiosInstance.delete(`/institucion/aulas/eliminar/${id}/`);
+      await AxiosInstance.delete(`/institucion/aulas/${id}/eliminar/`);
       setAulas(prev => prev.filter(a => a.id !== id));
     } catch {
       alert('Error al eliminar aula.');
@@ -89,6 +112,7 @@ export default function SuperAdminAulas() {
       {modalOpen && (
         <AulaFormModal
           initial={editAula}
+          modulos={modulos}
           onCancel={() => { setModalOpen(false); setEditAula(null); }}
           onSave={handleSave}
         />
