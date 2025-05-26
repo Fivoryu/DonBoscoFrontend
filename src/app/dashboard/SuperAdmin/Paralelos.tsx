@@ -2,11 +2,14 @@ import AxiosInstance from "../../../components/AxiosInstance";
 import ParalelosTable from "./components/ParalelosTable";
 import ParaleloFormModal from "./components/ParaleloFormModal";
 import { Paralelo, Grado } from "@/app/modelos/Academico";
+import { Colegio, UnidadEducativa } from "@/app/modelos/Institucion";
 import { useState, useEffect } from "react";
 
 export default function SuperAdminParalelos() {
   const [grados, setGrados] = useState<Grado[]>([]);
   const [paralelos, setParalelos] = useState<Paralelo[]>([]);
+  const [unidades, setUnidades] = useState<UnidadEducativa[]>([]);
+  const [colegios, setColegios] = useState<Colegio[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<keyof Paralelo>("letra");
@@ -15,26 +18,30 @@ export default function SuperAdminParalelos() {
   const [editParalelo, setEditParalelo] = useState<Paralelo | null>(null);
 
   useEffect(() => {
-    setLoading(true);
+  setLoading(true);
     Promise.all([
       AxiosInstance.get<Grado[]>("/academico/grados/listar/"),
-      AxiosInstance.get<Paralelo[]>("/academico/paralelos/listar/")
+      AxiosInstance.get<Paralelo[]>("/academico/paralelos/listar/"),
+      AxiosInstance.get<UnidadEducativa[]>("/institucion/unidades-educativas/listar/"),
+      AxiosInstance.get<Colegio[]>("/institucion/colegios/listar/")
     ])
-    .then(([resG, resP]) => {
-      setGrados(resG.data.map((g: any) => ({
-        id: g.id,
-        unidad_educativa: g.unidad_educativa,
-        nivel_educativo: g.nivel_educativo,
-        numero: g.numero,
-        nombre: g.nombre,
-      })));
-      setParalelos(resP.data.map((p: any) => ({ id: p.id, grado: p.grado, letra: p.letra })));
+    .then(([resG, resP, resU, resC]) => {
+      setGrados(resG.data);
+      setParalelos(resP.data);
+      setUnidades(resU.data);
+      setColegios(resC.data);
     })
-    .catch(() => setError("No se pudieron cargar grados o paralelos."))
+    .catch(() => setError("No se pudieron cargar los datos."))
     .finally(() => setLoading(false));
   }, []);
 
-  const toggleSort = (key: keyof Paralelo) => key === sortKey ? setAsc(!asc) : (setSortKey(key), setAsc(true));
+  const toggleSort = (key: string) => {
+    if (key === sortKey) setAsc(!asc);
+    else {
+      setSortKey(key as keyof Paralelo);
+      setAsc(true);
+    }
+  };
 
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este paralelo?")) return;
@@ -55,7 +62,7 @@ export default function SuperAdminParalelos() {
     setEditParalelo(null);
   };
 
-  
+  console.log(paralelos)
 
   return (
     <section className="p-6 space-y-4">
@@ -82,7 +89,8 @@ export default function SuperAdminParalelos() {
         <ParaleloFormModal
           initial={editParalelo}
           grados={grados}
-          paralelos={paralelos}
+          colegios={colegios}          // No olvides pasar todos los props requeridos
+          unidades={unidades}
           onCancel={() => { setModalOpen(false); setEditParalelo(null); }}
           onSave={handleSave}
         />

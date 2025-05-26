@@ -25,11 +25,13 @@ export default function SuperAdminCursos() {
     .then(([resP, resC]) => {
       setParalelos(resP.data.map((p: any) => ({
         id: p.id,
-        grado: p.grado_fk,
+        grado: p.grado,
+        gradoId: p.gradoId,
         letra: p.letra
       })));
       setCursos(resC.data.map((c: any) => ({
-        paraleloId: c.paralelo,
+        paraleloId: c.paralelo.id,
+        paralelo: c.paralelo,
         nombre: c.nombre,
         unidadEducativa: c.unidad_educativa,
         unidadEducativaNombre: c.unidad_educativa_nombre
@@ -50,6 +52,8 @@ export default function SuperAdminCursos() {
       alert("Error al eliminar curso.");
     }
   };
+
+  console.log("paralelos", paralelos);
 
   const handleEdit = (c: Curso | null) => { setEditCurso(c); setModalOpen(true); };
 

@@ -27,7 +27,8 @@ export interface Grado {
  */
 export interface Paralelo {
   id: number;
-  grado: Grado | number;
+  grado?: Grado;
+  gradoId?: number;
   letra: string;
 }
 
@@ -37,6 +38,7 @@ export interface Paralelo {
 export interface Curso {
   paraleloId: number;
   nombre: string;
+  paralelo?: Paralelo;
 }
 
 /**

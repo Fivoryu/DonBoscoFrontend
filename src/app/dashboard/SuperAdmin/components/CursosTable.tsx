@@ -1,4 +1,4 @@
-import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import { Curso, Paralelo } from "@/app/modelos/Academico";
 import { useMemo, useState } from "react";
 
@@ -12,12 +12,18 @@ interface Props {
   onDelete: (paraleloId: number) => void;
 }
 
-const cols: Array<[keyof Curso, string]> = [
-  ["paraleloId", "Paralelo"],
+type CursoDisplay = Curso & {
+  unidadEducativaNombre: string;
+  colegioNobmre: string;
+}
+
+const cols: Array<[keyof CursoDisplay, string]> = [
+  ["unidadEducativaNombre", "Unidad Educativa"],
+  ["colegioNobmre", "Colegio"],
   ["nombre", "Nombre Curso"],
 ];
 
-export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleSort, onEdit, onDelete }: Props) {
+export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleSort }: Props) {
   const [search, setSearch] = useState("");
 
 
@@ -59,7 +65,7 @@ export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleS
               return (
                 <th
                   key={key}
-                  onClick={() => onToggleSort(key)}
+                  onClick={() => onToggleSort(key as keyof Curso)}
                   className="px-4 py-3 text-left cursor-pointer"
                 >
                   <span className="inline-flex items-center gap-1">
@@ -69,7 +75,6 @@ export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleS
                 </th>
               );
             })}
-            <th className="px-4 py-3 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody className="divide-y">
@@ -81,19 +86,15 @@ export default function CursosTable({ cursos, paralelos, sortKey, asc, onToggleS
             </tr>
           ) : (
             sorted.map(c => {
-              const paralelo = paralelos.find(p => p.id === c.paraleloId);
               return (
                 <tr key={c.paraleloId} className="hover:bg-blue-50">
-                  <td className="px-4 py-3">{paralelo?.letra ?? "–"}</td>
-                  <td className="px-4 py-3">{c.nombre}</td>
-                  <td className="px-4 py-3 text-right">
-                    <button onClick={() => onEdit(c)} className="mr-2 text-blue-600 hover:underline">
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => onDelete(c.paraleloId)} className="text-red-600 hover:underline">
-                      <Trash className="w-4 h-4" />
-                    </button>
+                  <td className="px-4 py-3">
+                    {paralelos.find(p => p.id === c.paraleloId)?.grado?.unidad_educativa?.nombre || "N/A"}
                   </td>
+                  <td className="px-4 py-3">
+                    {paralelos.find(p => p.id === c.paraleloId)?.grado?.unidad_educativa?.colegio?.nombre || "N/A"}
+                  </td>
+                  <td className="px-4 py-3">{c.nombre}</td>
                 </tr>
               );
             })
