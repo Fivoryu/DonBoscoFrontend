@@ -1,7 +1,7 @@
 import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
 import { Aula, Modulo, TipoAula } from "@/app/modelos/Institucion";
 import { useMemo, useState } from "react";
-import { getModuloFromAula } from "../utils/getModuloFromAula";
+import { getModuloFromAula } from "../../utils/getModuloFromAula";
 import Table from "@/components/Table";
 
 const TIPO_LABELS: Record<TipoAula, string> = {

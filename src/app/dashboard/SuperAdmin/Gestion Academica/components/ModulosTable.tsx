@@ -1,7 +1,7 @@
 import { ChevronUp, ChevronDown, Pencil, Trash, CheckCircle, XCircle } from "lucide-react";
 import { Modulo, Colegio } from "@/app/modelos/Institucion";
 import { useMemo, useState } from "react";
-import { getColegioName } from "../utils/getColegioName";
+import { getColegioName } from "../../utils/getColegioName";
 import Table from "@/components/Table";
 
 interface Props {

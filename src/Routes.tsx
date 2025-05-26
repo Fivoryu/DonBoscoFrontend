@@ -6,18 +6,19 @@ import Register from "./app/usuarios/Register";
 
 import SuperAdminLayout from "./app/dashboard/SuperAdmin/Layout";
 import SuperAdminInicio from "./app/dashboard/SuperAdmin/Inicio";
-import SuperAdminColegios from "./app/dashboard/SuperAdmin/Colegios";
-import SuperAdminUnidades from "./app/dashboard/SuperAdmin/Unidades";
-import SuperAdminUsuarios from "./app/dashboard/SuperAdmin/Usuarios";
+import SuperAdminColegios from "./app/dashboard/SuperAdmin/Configuracion Institucional/Colegios";
+import SuperAdminUnidades from "./app/dashboard/SuperAdmin/Configuracion Institucional/Unidades";
+import SuperAdminUsuarios from "./app/dashboard/SuperAdmin/Gestion Usuarios/Usuarios";
 import SuperAdminInfraestructura from "./app/dashboard/SuperAdmin/Infraestructura";
 
-import SuperAdminGrados from "./app/dashboard/SuperAdmin/Grado";
-import SuperAdminRoles from "./app/dashboard/SuperAdmin/Roles";
+import SuperAdminGrados from "./app/dashboard/SuperAdmin/Gestion Academica/Grado";
+import SuperAdminRoles from "./app/dashboard/SuperAdmin/Gestion Usuarios/Roles";
 import RequireAuth from "./app/routes/RequireAuth";
-import SuperAdminAulas from "./app/dashboard/SuperAdmin/Aulas";
-import SuperAdminModulos from "./app/dashboard/SuperAdmin/Modulos";
-import SuperAdminCursos from "./app/dashboard/SuperAdmin/Cursos";
-import SuperAdminParalelos from "./app/dashboard/SuperAdmin/Paralelos";
+import SuperAdminAulas from "./app/dashboard/SuperAdmin/Gestion Academica/Aulas";
+import SuperAdminModulos from "./app/dashboard/SuperAdmin/Gestion Academica/Modulos";
+import SuperAdminCursos from "./app/dashboard/SuperAdmin/Gestion Academica/Cursos";
+import SuperAdminParalelos from "./app/dashboard/SuperAdmin/Gestion Academica/Paralelos";
+import SuperAdminTipoHorario from "./app/dashboard/SuperAdmin/Planificacion Academica/TipoHorario";
 
 export const Routes: RouteObject[] = [
   {
@@ -51,6 +52,7 @@ export const Routes: RouteObject[] = [
       { path: "cursos", element: <SuperAdminCursos /> },
       { path: "paralelos", element: <SuperAdminParalelos />},
       { path: "roles", element: <SuperAdminRoles /> },
+      { path: "tipo-horario", element: <SuperAdminTipoHorario />}
     ],
   },
   // { path: "*", element: <NotFound /> }

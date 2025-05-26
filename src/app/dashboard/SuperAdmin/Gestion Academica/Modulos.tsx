@@ -1,4 +1,4 @@
-import AxiosInstance from "../../../components/AxiosInstance";
+import AxiosInstance from "../../../../components/AxiosInstance";
 
 import ModulosTable from "./components/ModulosTable";
 import ModuloFormModal from "./components/ModulosFormModal";

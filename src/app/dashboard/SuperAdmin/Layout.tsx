@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
-import PerfilModal from "./Perfil"; // Asegúrate de tener este componente
+import PerfilModal from "./Gestion Usuarios/Perfil"; // Asegúrate de tener este componente
 import AxiosInstance from "@/components/AxiosInstance";
 
 // const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL_LOCAL as string;

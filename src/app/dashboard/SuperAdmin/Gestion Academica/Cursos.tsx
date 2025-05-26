@@ -1,4 +1,4 @@
-import AxiosInstance from "../../../components/AxiosInstance";
+import AxiosInstance from "../../../../components/AxiosInstance";
 import CursosTable from "./components/CursosTable";
 import CursoFormModal from "./components/CursoFormModal";
 import { Curso, Paralelo } from "@/app/modelos/Academico";

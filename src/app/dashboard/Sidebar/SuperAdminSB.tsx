@@ -17,7 +17,8 @@ import {
   BookOpen,
   FileText,
   UserCheck,
-  User
+  User,
+  CalendarDays
 } from "lucide-react";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -102,6 +103,11 @@ const sections: Array<{
         label: "Horario",
         icon: ClockIcon,
       },
+      {
+        to: "/dashboard/superadmin/tipo-horario",
+        label: "Tipo de Horario",
+        icon: CalendarDays
+      }
     ],
   },
 ];

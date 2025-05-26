@@ -1,4 +1,4 @@
-import AxiosInstance from "../../../components/AxiosInstance";
+import AxiosInstance from "../../../../components/AxiosInstance";
 import ParalelosTable from "./components/ParalelosTable";
 import ParaleloFormModal from "./components/ParaleloFormModal";
 import { Paralelo, Grado } from "@/app/modelos/Academico";
@@ -62,7 +62,6 @@ export default function SuperAdminParalelos() {
     setEditParalelo(null);
   };
 
-  console.log(paralelos)
 
   return (
     <section className="p-6 space-y-4">

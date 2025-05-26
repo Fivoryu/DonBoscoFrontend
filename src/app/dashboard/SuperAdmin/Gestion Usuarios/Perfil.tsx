@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, LogOut } from "lucide-react";
-import AxiosInstance from "../../../components/AxiosInstance";
+import AxiosInstance from "../../../../components/AxiosInstance";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL_LOCAL;
 
