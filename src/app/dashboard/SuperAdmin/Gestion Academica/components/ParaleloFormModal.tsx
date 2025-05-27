@@ -30,12 +30,12 @@ export default function ParaleloFormModal({
 }: Props) {
   // --- Estados independientes para colegio, unidad y grado ---
   const [colegioId, setColegioId] = useState<number>(
-    initial && typeof initial.grado !== "number"
+    initial && typeof initial.grado !== "number" && initial.grado
       ? initial.grado.unidad_educativa.colegio?.id ?? 0
       : 0
   );
   const [unidadId, setUnidadId] = useState<number>(
-    initial && typeof initial.grado !== "number"
+    initial && typeof initial.grado !== "number" && initial.grado
       ? initial.grado.unidad_educativa.id
       : 0
   );
@@ -43,7 +43,7 @@ export default function ParaleloFormModal({
   const [form, setForm] = useState<{ letra: string; gradoId: number }>({
     letra: initial ? initial.letra : "",
     gradoId:
-      initial && typeof initial.grado !== "number" ? initial.grado.id : 0,
+      initial && typeof initial.grado !== "number" && initial.grado ? initial.grado.id : 0,
   });
 
   // Cuando cambia colegio → filtro unidades y reseteo unidad+grado
