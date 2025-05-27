@@ -72,8 +72,6 @@ export const DIAS_SEMANA: { value: DiaSemana; label: string } [] = [
 
 export interface Horario {
   id: number;
-  nombre: string;
-  descripcion: string;
   tipo: TipoHorario;
   tipo_nombre: string;
   tipo_turno_display: string;

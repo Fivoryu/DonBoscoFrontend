@@ -19,6 +19,7 @@ import SuperAdminModulos from "./app/dashboard/SuperAdmin/Gestion Academica/Modu
 import SuperAdminCursos from "./app/dashboard/SuperAdmin/Gestion Academica/Cursos";
 import SuperAdminParalelos from "./app/dashboard/SuperAdmin/Gestion Academica/Paralelos";
 import SuperAdminTipoHorario from "./app/dashboard/SuperAdmin/Planificacion Academica/TipoHorario";
+import SuperAdminHorario from "./app/dashboard/SuperAdmin/Planificacion Academica/Horario";
 
 export const Routes: RouteObject[] = [
   {
@@ -52,7 +53,8 @@ export const Routes: RouteObject[] = [
       { path: "cursos", element: <SuperAdminCursos /> },
       { path: "paralelos", element: <SuperAdminParalelos />},
       { path: "roles", element: <SuperAdminRoles /> },
-      { path: "tipo-horario", element: <SuperAdminTipoHorario />}
+      { path: "tipo-horario", element: <SuperAdminTipoHorario />},
+      { path: "horario", element: <SuperAdminHorario />},
     ],
   },
   // { path: "*", element: <NotFound /> }
