@@ -88,7 +88,7 @@ export default function SuperAdminColegios() {
       if (editing) {
         // ── EDICIÓN ──
         res = await AxiosInstance.put(
-          `/institucion/editar/${editing.id}/`,
+          `/institucion/colegios/${editing.id}/editar/`,
           payload,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -149,7 +149,7 @@ export default function SuperAdminColegios() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este colegio?")) return;
     try {
-      await AxiosInstance.delete(`/institucion/eliminar/${id}/`);
+      await AxiosInstance.delete(`/institucion/colegios/${id}/eliminar/`);
       setColegios((prev) => prev.filter((c) => c.id !== id));
       alert("Colegio eliminado exitosamente.");
     } catch (err) {

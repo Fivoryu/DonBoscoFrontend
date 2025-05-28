@@ -15,6 +15,8 @@ import {
   Table2,
   Calendar as CalendarIcon,
   BookOpen,
+  Library,
+  LibraryBig,
   FileText,
   UserCheck,
   User,
@@ -64,7 +66,12 @@ const sections: Array<{
       {
         to: "/dashboard/superadmin/materia",
         label: "Materia",
-        icon: FileText,
+        icon: LibraryBig,
+      },
+      {
+        to: "/dashboard/superadmin/materia-curso",
+        label: "Materia Curso",
+        icon: Library,
       },
       {
         to: "/dashboard/superadmin/profesor",

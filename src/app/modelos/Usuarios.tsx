@@ -129,7 +129,7 @@ export class Admin {
   }
 }
 
-export type AccionBitacora = 'crear' | 'editar' | 'eliminar' | 'ver' | 'otro';
+export type AccionBitacora = 'crear' | 'editar' | 'eliminar' | 'listar' | 'otro';
 
 export class Bitacora {
   id: number;

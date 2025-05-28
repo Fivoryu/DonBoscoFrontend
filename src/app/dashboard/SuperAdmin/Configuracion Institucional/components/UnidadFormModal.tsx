@@ -1,231 +1,213 @@
 // src/app/dashboard/components/UnidadFormModal.tsx
-import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Colegio, UnidadEducativa } from '@/app/modelos/Institucion';
-import { Admin } from '@/app/modelos/Usuarios';
-
-export interface FormState {
-  id?: number;
-  nombre: string;
-  codigoSie: string;
-  turno: UnidadEducativa['turno'];
-  nivel: string;
-  colegio: Colegio | null;
-  direccion: string;
-  telefono: string;
-  adminId: number | null;
-}
+import React, { useState, useEffect, useMemo } from "react";
+import FormModal from "@/components/FormModal";
+import AxiosInstance from "@/components/AxiosInstance";
+import { UnidadEducativa, Colegio } from "@/app/modelos/Institucion";
+import { Turno } from "@/app/modelos/Calendario";
 
 interface Props {
-  open: boolean;
-  initial: FormState;
+  initial: UnidadEducativa | null;
   colegios: Colegio[];
-  admins: Admin[];
-  onClose: () => void;
-  onSave: (data: FormState) => void;
+  onCancel: () => void;
+  onSave: (u: UnidadEducativa) => void;
 }
 
 export default function UnidadFormModal({
-  open,
   initial,
   colegios,
-  admins,
-  onClose,
+  onCancel,
   onSave,
 }: Props) {
-  const [form, setForm] = useState<FormState>(initial);
-  const [adminQuery, setAdminQuery] = useState<string>('');
+  const [form, setForm] = useState({
+    id:        initial?.id ?? 0,
+    colegioId: initial?.colegio.id ?? colegios[0]?.id ?? 0,
+    nombre:    initial?.nombre ?? "",
+    codigoSie: initial?.codigo_sie ?? "",
+    turno:     initial?.turno as Turno ?? "MAÑANA",
+    nivel:     initial?.nivel ?? "Inicial",
+    direccion: initial?.direccion ?? "",
+    telefono:  initial?.telefono ?? "",
+  });
 
-  // Cada vez que cambie el `initial`, reiniciamos el formulario
+  // reset when initial changes
   useEffect(() => {
-    setForm(initial);
-    setAdminQuery('');
+    if (initial) {
+      setForm({
+        id:        initial.id,
+        colegioId: initial.colegio.id,
+        nombre:    initial.nombre ?? "",
+        codigoSie: initial.codigo_sie,
+        turno:     initial.turno,
+        nivel:     initial.nivel ?? "Inicial",
+        direccion: initial.direccion ?? "",
+        telefono:  initial.telefono ?? "",
+      });
+    }
   }, [initial]);
 
-  if (!open) return null;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.currentTarget;
+    setForm(f => ({
+      ...f,
+      [name]:
+        name === "colegioId"
+          ? Number(value)
+          : value,
+    }));
+  };
 
-  const handleSave = () => {
-    // Validaciones básicas
-    if (
-      !form.nombre.trim() ||
-      !form.codigoSie.trim() ||
-      !form.turno ||
-      !form.nivel.trim() ||
-      form.colegio == null
-    ) {
-      alert('Completa todos los campos obligatorios.');
+  // derive a display string for selected colegio
+  const colegioNombre = useMemo(() => {
+    return colegios.find(c => c.id === form.colegioId)?.nombre ?? "";
+  }, [form.colegioId, colegios]);
+
+  const handleSubmit = async () => {
+    // validations
+    if (!form.nombre.trim()) {
+      alert("El nombre es obligatorio");
       return;
     }
-    onSave(form);
+    if (!form.codigoSie.trim()) {
+      alert("El código SIE es obligatorio");
+      return;
+    }
+    try {
+      const payload = {
+        nombre:       form.nombre,
+        codigo_sie:   form.codigoSie,
+        turno:        form.turno,
+        nivel:        form.nivel,
+        direccion:    form.direccion || null,
+        telefono:     form.telefono || null,
+        colegio:      form.colegioId,
+      };
+      let resp;
+      if (form.id) {
+        resp = await AxiosInstance.put(
+          `/institucion/unidades-educativas/${form.id}/editar/`,
+          payload
+        );
+      } else {
+        resp = await AxiosInstance.post(
+          `/institucion/unidades-educativas/crear/`,
+          payload
+        );
+      }
+      onSave(resp.data);
+    } catch (err: any) {
+      alert("Error: " + JSON.stringify(err.response?.data || err.message));
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-xl p-6 rounded-xl shadow-lg relative space-y-4">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+    <FormModal
+      title={form.id ? "Editar Unidad Educativa" : "Nueva Unidad Educativa"}
+      onCancel={onCancel}
+      onSubmit={handleSubmit}
+      submitLabel="Guardar"
+    >
+      {/* Colegio */}
+      <div>
+        <label className="block mb-1">Colegio</label>
+        <select
+          name="colegioId"
+          value={form.colegioId}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
         >
-          <X className="w-5 h-5" />
-        </button>
-
-        <h2 className="text-xl font-semibold">
-          {form.id ? 'Editar unidad' : 'Nueva unidad'}
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Nombre */}
-          <div className="md:col-span-2">
-            <label className="block mb-1">Nombre</label>
-            <input
-              value={form.nombre ?? ''}
-              onChange={e => setForm({ ...form, nombre: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              placeholder="Ej. Don Bosco Central A"
-            />
-          </div>
-
-          {/* Colegio */}
-          <div>
-            <label className="block mb-1">Colegio</label>
-            <select
-              value={form.colegio?.id ?? ''}
-              onChange={e =>
-                setForm({
-                  ...form,
-                  colegio: e.target.value
-                    ? colegios.find(c => c.id === Number(e.target.value)) || null
-                    : null,
-                })
-              }
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">— Selecciona —</option>
-              {colegios.map(c => (
-                <option key={c.id} value={c.id}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Código SIE */}
-          <div>
-            <label className="block mb-1">Código SIE</label>
-            <input
-              value={form.codigoSie ?? ''}
-              onChange={e =>
-                setForm({ ...form, codigoSie: e.target.value })
-              }
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Turno */}
-          <div>
-            <label className="block mb-1">Turno</label>
-            <select
-              value={form.turno ?? ''}
-              onChange={e =>
-                setForm({
-                  ...form,
-                  turno: e.target.value as FormState['turno'],
-                })
-              }
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">— Selecciona —</option>
-              <option value="MAÑANA">Mañana</option>
-              <option value="TARDE">Tarde</option>
-              <option value="NOCHE">Noche</option>
-              <option value="COMPLETO">Jornada Completa</option>
-            </select>
-          </div>
-
-          {/* Nivel */}
-          <div>
-            <label className="block mb-1">Nivel</label>
-            <select
-              value={form.nivel ?? ''}
-              onChange={e => setForm({ ...form, nivel: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">— Selecciona —</option>
-              <option value="Inicial">Inicial</option>
-              <option value="Primaria">Primaria</option>
-              <option value="Secundaria">Secundaria</option>
-            </select>
-          </div>
-
-          {/* Dirección */}
-          <div>
-            <label className="block mb-1">Dirección</label>
-            <input
-              value={form.direccion ?? ''}
-              onChange={e =>
-                setForm({ ...form, direccion: e.target.value })
-              }
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Teléfono */}
-          <div>
-            <label className="block mb-1">Teléfono</label>
-            <input
-              value={form.telefono ?? ''}
-              onChange={e =>
-                setForm({ ...form, telefono: e.target.value })
-              }
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Búsqueda de Admin por CI */}
-          <div className="md:col-span-2">
-            <label className="block mb-1">Buscar Admin (CI)</label>
-            <input
-              value={adminQuery}
-              onChange={e => setAdminQuery(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              placeholder="Al menos 7 dígitos de CI"
-            />
-            {adminQuery.length >= 7 && (
-              <ul className="border mt-1 max-h-32 overflow-y-auto rounded">
-                {admins
-                  .filter(a => a.usuario.ci.includes(adminQuery))
-                  .map(a => (
-                    <li
-                      key={a.usuario.id}
-                      onClick={() => {
-                        setForm(f => ({ ...f, adminId: Number(a.usuario.id) }));
-                        setAdminQuery(`${a.usuario.nombre} — ${a.usuario.ci}`);
-                      }}
-                      className="px-3 py-1 cursor-pointer hover:bg-blue-100"
-                    >
-                      {a.usuario.nombre} — {a.usuario.ci}
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 border rounded"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-6 py-2 bg-blue-600 text-white rounded"
-          >
-            Guardar
-          </button>
-        </div>
+          {colegios.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
+
+      {/* Código SIE */}
+      <div>
+        <label className="block mb-1">Código SIE</label>
+        <input
+          name="codigoSie"
+          value={form.codigoSie}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Ej. 12345"
+        />
+      </div>
+
+      {/* Nombre */}
+      <div>
+        <label className="block mb-1">Nombre</label>
+        <input
+          name="nombre"
+          value={form.nombre}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Ej. Don Bosco Central A"
+        />
+      </div>
+
+      {/* Turno */}
+      <div>
+        <label className="block mb-1">Turno</label>
+        <select
+          name="turno"
+          value={form.turno}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        >
+          <option value="MAÑANA">Mañana</option>
+          <option value="TARDE">Tarde</option>
+          <option value="NOCHE">Noche</option>
+          <option value="COMPLETO">Jornada Completa</option>
+        </select>
+      </div>
+
+      {/* Nivel */}
+      <div>
+        <label className="block mb-1">Nivel</label>
+        <select
+          name="nivel"
+          value={form.nivel}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        >
+          <option value="Inicial">Inicial</option>
+          <option value="Primaria">Primaria</option>
+          <option value="Secundaria">Secundaria</option>
+        </select>
+      </div>
+
+      {/* Dirección */}
+      <div>
+        <label className="block mb-1">Dirección</label>
+        <input
+          name="direccion"
+          value={form.direccion}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Opcional"
+        />
+      </div>
+
+      {/* Teléfono */}
+      <div>
+        <label className="block mb-1">Teléfono</label>
+        <input
+          name="telefono"
+          value={form.telefono}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          placeholder="Opcional"
+        />
+      </div>
+
+      {/* Info colegio seleccionado */}
+      <div className="text-sm text-gray-600">
+        <strong>Colegio seleccionado:</strong> {colegioNombre}
+      </div>
+    </FormModal>
   );
 }

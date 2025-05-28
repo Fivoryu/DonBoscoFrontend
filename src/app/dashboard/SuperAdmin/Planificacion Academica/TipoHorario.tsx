@@ -35,7 +35,7 @@ export default function SuperAdminTipoHorario() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este tipo de horario?")) return;
     try {
-      await AxiosInstance.delete(`/calendarios/paralelos/${id}/eliminar/`);
+      await AxiosInstance.delete(`/calendarios/tipos-horario/${id}/eliminar/`);
       setTipoHorario(prev => prev.filter(t => t.id !== id));
     } catch {
       alert("Error al eliminar tipo de horario.");

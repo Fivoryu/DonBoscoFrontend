@@ -20,6 +20,9 @@ import SuperAdminCursos from "./app/dashboard/SuperAdmin/Gestion Academica/Curso
 import SuperAdminParalelos from "./app/dashboard/SuperAdmin/Gestion Academica/Paralelos";
 import SuperAdminTipoHorario from "./app/dashboard/SuperAdmin/Planificacion Academica/TipoHorario";
 import SuperAdminHorario from "./app/dashboard/SuperAdmin/Planificacion Academica/Horario";
+import SuperAdminMateria from "./app/dashboard/SuperAdmin/Gestion Academica/Materia";
+import SuperAdminMateriaCurso from "./app/dashboard/SuperAdmin/Gestion Academica/MateriaCurso";
+import SuperAdminProfesor from "./app/dashboard/SuperAdmin/Gestion Academica/Profesor";
 
 export const Routes: RouteObject[] = [
   {
@@ -47,6 +50,7 @@ export const Routes: RouteObject[] = [
       { path: "unidades", element: <SuperAdminUnidades /> },
       { path: "usuarios", element: <SuperAdminUsuarios /> },
       { path: "infraestructura", element: <SuperAdminInfraestructura /> },
+      { path: "profesor", element: <SuperAdminProfesor />},
       { path: "grados", element: <SuperAdminGrados /> },
       { path: "modulos", element: <SuperAdminModulos /> },
       { path: "aulas", element: <SuperAdminAulas /> },
@@ -55,6 +59,8 @@ export const Routes: RouteObject[] = [
       { path: "roles", element: <SuperAdminRoles /> },
       { path: "tipo-horario", element: <SuperAdminTipoHorario />},
       { path: "horario", element: <SuperAdminHorario />},
+      { path: "materia", element: <SuperAdminMateria />},
+      { path: "materia-curso", element: <SuperAdminMateriaCurso />}
     ],
   },
   // { path: "*", element: <NotFound /> }

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import AxiosInstance from "@/components/AxiosInstance";
-import { Usuario, Rol } from "@/app/modelos/Usuarios";
+import { Usuario } from "@/app/modelos/Usuarios";
+import { Especialidad } from "@/app/modelos/Personal";
+import { Estudiante, Tutor } from "@/app/modelos/Estudiantes";
+import FormModal from "@/components/FormModal";
 
 interface Props {
   initial: Usuario | null;
@@ -26,38 +28,73 @@ const getRolNombreById = (id: number): string => {
   }
 };
 
+type FormType = Usuario & {
+  especialidadId?: number;
+  rude?: string;
+  tutorCi?: string;
+  tutorParentesco?: string;
+  parentesco?: string;
+  hijoCi?: string;
+  puesto?: string;
+};
+
 
 
 export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
-  const [form, setForm] = useState<Usuario>(
-    initial ?? ({
-      id: 0,
-      ci: "",
-      nombre: "",
-      apellido: "",
-      email: "",
-      username: "",
-      foto: null,
-      fecha_nacimiento: "",
-      rol: new Rol({ id: 0, nombre: "" }),
-      password: null,
-      estado: true,
-      is_staff: false,
-      is_active: true,
-      date_joined: new Date().toISOString(),
-      sexo: "",
-      telefono: null,
-    })
+  const [form, setForm] = useState<FormType>(
+    // inicializa con los campos de Usuario + undefined para los extras
+    initial
+      ? { ...initial }
+      : ({
+          id: 0,
+          ci: "",
+          nombre: "",
+          apellido: "",
+          email: "",
+          username: "",
+          foto: null,
+          fecha_nacimiento: "",
+          rol: { id: 0, nombre: "" },
+          password: null,
+          estado: true,
+          is_staff: false,
+          is_active: true,
+          date_joined: new Date().toISOString(),
+          sexo: "",
+          telefono: null,
+          // campos extra quedan undefined
+        } as FormType)
   );
+
+  const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
+  const [tutores, setTutores] = useState<Tutor[]>([]);
+  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+
+  useEffect(() => {
+    if (form.rol.id === 5) {
+      AxiosInstance.get<Especialidad[]>("/personal/especialidades/listar/").then(r => {
+        setEspecialidades(r.data);
+      });
+    }
+    if (form.rol.id === 4) {
+      AxiosInstance.get<Tutor[]>("/estudiantes/tutores/").then(r => {
+        setTutores(r.data);
+      });
+    }
+    if (form.rol.id === 6) {
+      AxiosInstance.get<Estudiante[]>("/estudiantes/estudiantes/listar").then(r => {
+        setEstudiantes(r.data);
+      });
+    }
+  }, [form.rol.id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, files } = e.currentTarget as any;
-    setForm((f) => ({
+    const { name, value, type } = e.currentTarget;
+    setForm(f => ({
       ...f,
-      [name]:
-        type === "file" && files && files[0] ? files[0] : value,
+      [name]: type === "number" ? Number(value) : value,
     }));
   };
 
@@ -70,6 +107,15 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
     formData.append("apellido", form.apellido);
     formData.append("email", form.email);
     formData.append("username", form.username);
+    formData.append("rol_id", String(form.rol.id));
+
+    if (form.especialidadId)   formData.append("especialidad_id", String(form.especialidadId));
+    if (form.rude)             formData.append("rude", form.rude);
+    if (form.tutorCi)          formData.append("tutor_ci", form.tutorCi);
+    if (form.tutorParentesco)  formData.append("parentesco", form.tutorParentesco);
+    if (form.hijoCi)           formData.append("hijo_ci", form.hijoCi);
+    if (form.parentesco)       formData.append("parentesco", form.parentesco);
+    if (form.puesto)           formData.append("puesto", form.puesto);
     if (form.password)      formData.append("password", form.password);
     if (form.telefono)      formData.append("telefono", form.telefono);
     if (form.fecha_nacimiento)
@@ -106,176 +152,255 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-lg p-6 rounded-xl shadow-lg relative">
-        <button
-          onClick={onCancel}
-          className="absolute top-3 right-3 p-1 text-gray-500 hover:text-gray-700"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <h2 className="text-xl font-bold mb-4">
-          {form.id ? "Editar Usuario" : "Nuevo Usuario"}
-        </h2>
-        <div className="grid grid-cols-2 gap-4">
-          {/* CI */}
-          <div>
-            <label className="block mb-1">CI</label>
-            <input
-              name="ci"
-              value={form.ci}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Nombre */}
-          <div>
-            <label className="block mb-1">Nombre</label>
-            <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Apellido */}
-          <div>
-            <label className="block mb-1">Apellido</label>
-            <input
-              name="apellido"
-              value={form.apellido}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Email */}
-          <div>
-            <label className="block mb-1">Email</label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Username */}
-          <div>
-            <label className="block mb-1">Usuario</label>
-            <input
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Contraseña */}
-          <div>
-            <label className="block mb-1">Contraseña</label>
-            <input
-              name="password"
-              type="password"
-              value={form.password ?? ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Telefono */}
-          <div>
-            <label className="block mb-1">Teléfono</label>
-            <input
-              name="telefono"
-              value={form.telefono ?? ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Rol */}
-          <div>
-            <label className="block mb-1">Rol</label>
-            <select
-              name="rol"
-              value={form.rol.id}
-              onChange={(e) => {
-                const rolId = Number(e.target.value); // Obtener el ID del rol como número
-                const rolNombre = getRolNombreById(rolId).toLowerCase(); // Convertir el nombre a minúsculas
-                setForm({
-                  ...form,
-                  rol: { id: rolId, nombre: rolNombre }, // Solo asignamos id y nombre en minúsculas
-                });
-                console.log("Rol seleccionado:", rolId, rolNombre);
-              }}
-              className="w-full border rounded p-2"
-            >
-              <option value="">— Selecciona —</option>
-              <option value="2">SuperAdmin</option>
-              <option value="3">Admin</option>
-              <option value="4">Estudiante</option>
-              <option value="5">Profesor</option>
-              <option value="6">Tutor</option>
-            </select>
-          </div>
-
-
-          {/* Foto */}
-          <div>
-            <label className="block mb-1">Foto</label>
-            <input
-              name="foto"
-              type="file"
-              accept="image/*"
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-            {form.foto && typeof form.foto !== "string" && (
-              <img
-                src={URL.createObjectURL(form.foto as File)}
-                alt="preview"
-                className="mt-2 w-20 h-20 rounded-full object-cover"
-              />
-            )}
-          </div>
-          {/* Fecha nacimiento */}
-          <div>
-            <label className="block mb-1">Nacimiento</label>
-            <input
-              name="fecha_nacimiento"
-              type="date"
-              value={form.fecha_nacimiento?.slice(0, 10) || ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-          {/* Sexo */}
-          <div>
-            <label className="block mb-1">Sexo</label>
-            <select
-              name="sexo"
-              value={form.sexo}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            >
-              <option value="">— Selecciona —</option>
-              <option value="M">Masculino</option>
-              <option value="F">Femenino</option>
-            </select>
-          </div>
-        </div>
-        <div className="mt-6 flex justify-end gap-2">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 border rounded"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Guardar
-          </button>
-        </div>
+    <FormModal 
+      title={form.id ? "Editar Usuario" : "Nuevo Usuario"}
+      onCancel={onCancel}
+      onSubmit={handleSubmit}
+      submitLabel="Guardar"
+    >
+      <div>
+        <label className="block mb-1">CI</label>
+        <input
+          name="ci"
+          value={form.ci}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
       </div>
-    </div>
+      <div>
+        <label className="block mb-1">Nombre</label>
+        <input
+          name="nombre"
+          value={form.nombre}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Apellido</label>
+        <input
+          name="apellido"
+          value={form.apellido}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Email</label>
+        <input
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Usuario</label>
+        <input
+          name="username"
+          value={form.username}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Contraseña</label>
+        <input
+          name="password"
+          type="password"
+          value={form.password ?? ""}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Teléfono</label>
+        <input
+          name="telefono"
+          value={form.telefono ?? ""}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+      </div>
+      <div>
+          <label>Rol</label>
+          <select
+            name="rol"
+            value={form.rol.id}
+            onChange={e => {
+              const id = Number(e.target.value);
+              setForm(f => ({
+                ...f,
+                rol: { id, nombre: getRolNombreById(id).toLowerCase() },
+                // limpia campos extra al cambiar rol
+                especialidadId: undefined,
+                rude: undefined,
+                tutorCi: undefined,
+                tutorParentesco: undefined,
+                parentesco: undefined,
+                hijoCi: undefined,
+                puesto: undefined,
+              }));
+            }}
+          >
+            <option value="">— Selecciona —</option>
+            <option value="2">SuperAdmin</option>
+            <option value="3">Admin</option>
+            <option value="4">Estudiante</option>
+            <option value="5">Profesor</option>
+            <option value="6">Tutor</option>
+          </select>
+        </div>
+
+        {/* 5) Campos condicionales */}
+        {/* PROFESOR */}
+        {form.rol.id === 5 && (
+          <div className="col-span-2">
+            <label>Especialidad (opcional)</label>
+            <select
+              name="especialidadId"
+              value={form.especialidadId ?? ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            >
+              <option value="">— Selecciona —</option>
+              {especialidades.map(e => (
+                <option key={e.id} value={e.id}>
+                  {e.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* ESTUDIANTE */}
+        {form.rol.id === 4 && (
+          <>
+            <div className="col-span-2">
+              <label>RUDE</label>
+              <input
+                name="rude"
+                value={form.rude ?? ""}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              />
+            </div>
+            <div>
+              <label>CI Tutor (opcional)</label>
+              <select
+                name="tutorCi"
+                value={form.tutorCi ?? ""}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              >
+                <option value="">— Selecciona —</option>
+                {tutores.map(t => (
+                  <option key={t.usuario.ci} value={t.usuario.ci}>
+                    {t.usuario.ci}
+                  </option>
+                ))}
+              </select>
+              {form.tutorCi && (
+                <p className="mt-1">
+                  Nombre:{" "}
+                  {
+                    tutores.find(t => t.usuario.ci === form.tutorCi)!
+                      .usuario.nombre
+                  }{" "}
+                  {
+                    tutores.find(t => t.usuario.ci === form.tutorCi)!
+                      .usuario.apellido
+                  }
+                </p>
+              )}
+            </div>
+            {form.tutorCi && (
+              <div>
+                <label>Parentesco</label>
+                <select
+                  name="tutorParentesco"
+                  value={form.tutorParentesco ?? ""}
+                  onChange={handleChange}
+                  className="w-full border rounded p-2"
+                >
+                  <option value="">— Selecciona —</option>
+                  <option value="PAD">Padre</option>
+                  <option value="MAD">Madre</option>
+                  <option value="TUT">Tutor Legal</option>
+                  <option value="HER">Hermano/a</option>
+                  <option value="OTR">Otro</option>
+                </select>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* TUTOR */}
+        {form.rol.id === 6 && (
+          <>
+            <div>
+              <label>CI Hijo</label>
+              <select
+                name="hijoCi"
+                value={form.hijoCi ?? ""}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              >
+                <option value="">— Selecciona —</option>
+                {estudiantes.map(e => (
+                  <option key={e.usuario.ci} value={e.usuario.ci}>
+                    {e.usuario.ci}
+                  </option>
+                ))}
+              </select>
+              {form.hijoCi && (
+                <p className="mt-1">
+                  Nombre:{" "}
+                  {
+                    estudiantes.find(
+                      e => e.usuario.ci === form.hijoCi
+                    )!.usuario.nombre
+                  }{" "}
+                  {
+                    estudiantes.find(
+                      e => e.usuario.ci === form.hijoCi
+                    )!.usuario.apellido
+                  }
+                </p>
+              )}
+            </div>
+            <div>
+              <label>Parentesco</label>
+              <select
+                name="parentesco"
+                value={form.parentesco ?? ""}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              >
+                <option value="">— Selecciona —</option>
+                <option value="PAD">Padre</option>
+                <option value="MAD">Madre</option>
+                <option value="TUT">Tutor Legal</option>
+                <option value="HER">Hermano/a</option>
+                <option value="OTR">Otro</option>
+              </select>
+            </div>
+          </>
+        )}
+
+        {/* ADMIN */}
+        {form.rol.id === 3 && (
+          <div className="col-span-2">
+            <label>Puesto</label>
+            <input
+              name="puesto"
+              value={form.puesto ?? ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+          </div>
+        )}
+    </FormModal>    
   );
 }

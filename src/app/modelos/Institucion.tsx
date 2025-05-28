@@ -48,21 +48,18 @@ export interface Aula {
 }
 
 /** Turnos permitidos para UnidadEducativa */
-export type Turno =
-  | 'MAÑANA'
-  | 'TARDE'
-  | 'NOCHE'
-  | 'COMPLETO';
+import { Turno } from "./Calendario";
 
 /** Unidad Educativa */
+import { Admin } from "./Usuarios";
 export interface UnidadEducativa {
   id: number;
   codigo_sie: string;
   turno: Turno;
-  nombre?: string | null;
+  nombre: string;
   direccion?: string | null;
   telefono?: string | null;
   nivel?: string | null;
-  adminId?: number | null;
-  colegio?: Colegio | null;
+  admin?: Admin
+  colegio: Colegio;
 }

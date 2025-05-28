@@ -36,10 +36,10 @@ export default function SuperAdminHorario() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("¿Eliminar este tipo de horario?")) return;
+    if (!confirm("¿Eliminar este horario?")) return;
     try {
-      await AxiosInstance.delete(`/calendarios/paralelos/${id}/eliminar/`);
-      setTipoHorario(prev => prev.filter(t => t.id !== id));
+      await AxiosInstance.delete(`/calendarios/horarios/${id}/eliminar/`);
+      setHorario(prev => prev.filter(t => t.id !== id));
     } catch {
       alert("Error al eliminar tipo de horario.");
     }
@@ -53,8 +53,6 @@ export default function SuperAdminHorario() {
     setModalOpen(false);
     setEditHorario(null);
   }
-
-  console.log(tipoHorario);
 
   return (
     <section className="p-6 space-y-4">

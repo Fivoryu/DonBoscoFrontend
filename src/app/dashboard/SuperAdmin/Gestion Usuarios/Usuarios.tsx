@@ -37,7 +37,7 @@ export default function SuperAdminUsuarios() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este usuario?")) return;
     try {
-      await AxiosInstance.delete(`/user/auth/usuarios/eliminar-usuario/${id}/`);
+      await AxiosInstance.delete(`/user/auth/usuarios/${id}/eliminar/`);
       setUsuarios((prev) => prev.filter((u) => u.id !== id));
     } catch {
       alert("Error al eliminar usuario.");

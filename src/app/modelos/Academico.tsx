@@ -27,7 +27,7 @@ export interface Grado {
  */
 export interface Paralelo {
   id: number;
-  grado?: Grado;
+  grado: Grado;
   gradoId?: number;
   letra: string;
 }
@@ -35,10 +35,14 @@ export interface Paralelo {
 /**
  * Curso: asignado a un Paralelo (OneToOne)
  */
+import { Profesor } from "./Personal";
+
 export interface Curso {
+  id: number;
   paraleloId: number;
   nombre: string;
-  paralelo?: Paralelo;
+  paralelo: Paralelo;
+  tutor: Profesor;
 }
 
 /**
@@ -54,6 +58,9 @@ export interface Materia {
  */
 export interface MateriaCurso {
   id: number;
-  cursoParaleloId: number;
-  materiaId: number;
+  curso_id: number;
+  curso: Curso;
+  materia: Materia;
+  materia_id: number;
+  profesor: Profesor;
 }
