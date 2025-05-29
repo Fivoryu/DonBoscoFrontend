@@ -41,8 +41,8 @@ export default function EspecialidadesTable({
     () =>
       especialidades.map(e => ({
         id: e.id,
-        colegio:         e.grado?.unidad_educativa?.colegio?.nombre,
-        unidadEducativa: e.grado?.unidad_educativa?.nombre,
+        colegio:         e.grado?.unidad_educativa?.colegio?.nombre ?? "",
+        unidadEducativa: e.grado?.unidad_educativa?.nombre ?? "",
         nombre:          e.nombre,
       })),
     [especialidades]
