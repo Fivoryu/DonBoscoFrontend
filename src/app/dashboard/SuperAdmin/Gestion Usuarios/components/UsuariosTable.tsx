@@ -79,7 +79,7 @@ export default function UsuariosTable({
 
   const goToBitacora = () => {
     if (!ctxUser) return;
-    navigate(`/dashboard/superadmin/bitacora/usuario/${ctxUser.id}`);
+    navigate(`/dashboard/superadmin/bitacora/${ctxUser.id}/usuario/`);
     setCtxOpen(false);
   };
 
