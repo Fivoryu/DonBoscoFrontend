@@ -12,7 +12,7 @@ interface Props {
 
 export default function CursoFormModal({ initial, paralelos, onCancel, onSave }: Props) {
   const [form, setForm] = useState<Curso>(
-    initial ?? { paraleloId: 0, nombre: "" }
+    initial ?? { id: 0, paraleloId: 0, nombre: "", paralelo: null as any, tutor: null as any }
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

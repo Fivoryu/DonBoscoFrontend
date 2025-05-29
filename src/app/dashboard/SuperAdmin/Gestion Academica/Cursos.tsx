@@ -30,11 +30,13 @@ export default function SuperAdminCursos() {
         letra: p.letra
       })));
       setCursos(resC.data.map((c: any) => ({
+        id: c.id,
         paraleloId: c.paralelo.id,
         paralelo: c.paralelo,
         nombre: c.nombre,
         unidadEducativa: c.unidad_educativa,
-        unidadEducativaNombre: c.unidad_educativa_nombre
+        unidadEducativaNombre: c.unidad_educativa_nombre,
+        tutor: c.tutor // Make sure this matches your Curso model; adjust as needed
       })));
     })
     .catch(() => setError("No se pudieron cargar paralelos o cursos."))
