@@ -110,7 +110,7 @@ export default function SuperAdminColegios() {
       } else {
         // ── CREACIÓN ──
         res = await AxiosInstance.post(
-          `/institucion/crear/`,
+          `/institucion/colegios/crear/`,
           payload,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
