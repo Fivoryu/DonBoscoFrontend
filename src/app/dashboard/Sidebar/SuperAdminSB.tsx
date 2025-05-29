@@ -20,7 +20,8 @@ import {
   FileText,
   UserCheck,
   User,
-  CalendarDays
+  CalendarDays,
+  FileType
 } from "lucide-react";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
@@ -72,6 +73,11 @@ const sections: Array<{
         to: "/dashboard/superadmin/materia-curso",
         label: "Materia Curso",
         icon: Library,
+      },
+      {
+        to: "/dashboard/superadmin/especialidad",
+        label: "Especialidad",
+        icon: FileType,
       },
       {
         to: "/dashboard/superadmin/profesor",
@@ -137,7 +143,7 @@ export default function SuperAdminSB() {
   return (
     <aside
       className={clsx(
-        "bg-white shadow transition-all flex flex-col h-screen", // ← h-screen fija altura
+        "bg-white shadow transition-all flex flex-col h-screen",
         openSide ? "w-64" : "w-16"
       )}
     >

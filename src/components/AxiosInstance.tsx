@@ -8,7 +8,7 @@ export const myBaseUrl = isDevelopment
 
 const AxiosInstance = axios.create({
   baseURL: myBaseUrl,
-  timeout: 5000,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
     accept: "application/json",

@@ -131,9 +131,9 @@ export class Admin {
 
 export type AccionBitacora = 'crear' | 'editar' | 'eliminar' | 'listar' | 'otro';
 
-export class Bitacora {
+export interface Bitacora {
   id: number;
-  usuarioId: number;
+  usuario: Usuario;
   hora_entrada: string;
   hora_salida?: string | null;
   ip?: string | null;
@@ -141,26 +141,4 @@ export class Bitacora {
   accion: AccionBitacora;
   descripcion?: string | null;
   fecha: string;
-
-  constructor(data: {
-    id: number;
-    usuarioId: number;
-    hora_entrada: string;
-    hora_salida?: string | null;
-    ip?: string | null;
-    tabla_afectada?: string | null;
-    accion: AccionBitacora;
-    descripcion?: string | null;
-    fecha: string;
-  }) {
-    this.id = data.id;
-    this.usuarioId = data.usuarioId;
-    this.hora_entrada = data.hora_entrada;
-    this.hora_salida = data.hora_salida ?? null;
-    this.ip = data.ip ?? null;
-    this.tabla_afectada = data.tabla_afectada ?? null;
-    this.accion = data.accion;
-    this.descripcion = data.descripcion ?? null;
-    this.fecha = data.fecha;
-  }
 }

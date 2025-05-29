@@ -23,6 +23,8 @@ import SuperAdminHorario from "./app/dashboard/SuperAdmin/Planificacion Academic
 import SuperAdminMateria from "./app/dashboard/SuperAdmin/Gestion Academica/Materia";
 import SuperAdminMateriaCurso from "./app/dashboard/SuperAdmin/Gestion Academica/MateriaCurso";
 import SuperAdminProfesor from "./app/dashboard/SuperAdmin/Gestion Academica/Profesor";
+import SuperAdminEspecialidad from "./app/dashboard/SuperAdmin/Gestion Academica/Especialidades";
+import BitacoraUsuarioPage from "./app/dashboard/SuperAdmin/Gestion Usuarios/BitacoraUsuarioPage";
 
 export const Routes: RouteObject[] = [
   {
@@ -60,7 +62,9 @@ export const Routes: RouteObject[] = [
       { path: "tipo-horario", element: <SuperAdminTipoHorario />},
       { path: "horario", element: <SuperAdminHorario />},
       { path: "materia", element: <SuperAdminMateria />},
-      { path: "materia-curso", element: <SuperAdminMateriaCurso />}
+      { path: "materia-curso", element: <SuperAdminMateriaCurso />},
+      { path: "especialidad", element: <SuperAdminEspecialidad />},
+      { path: "bitacora/usuario/:usuarioId", element: <BitacoraUsuarioPage/>}
     ],
   },
   // { path: "*", element: <NotFound /> }

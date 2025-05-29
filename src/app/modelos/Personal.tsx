@@ -1,12 +1,13 @@
 // src/app/modelos/Personal.ts
 
-import { Materia } from "@/app/modelos/Academico";
+import { Materia, Grado } from "@/app/modelos/Academico";
 import { Usuario } from "@/app/modelos/Usuarios";
 
 export interface Especialidad {
   id: number;
   nombre: string;
   materia: Materia;
+  grado: Grado;
 }
 
 export interface Profesor {

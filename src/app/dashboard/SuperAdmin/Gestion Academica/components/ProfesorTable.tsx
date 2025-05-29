@@ -1,4 +1,3 @@
-// src/app/dashboard/SuperAdmin/GestionPersonal/components/ProfesorTable.tsx
 import { useState, useMemo } from "react";
 import { ChevronUp, ChevronDown, Pencil, Trash } from "lucide-react";
 import Table from "@/components/Table";
@@ -23,8 +22,8 @@ export type Row = {
   email: string;
   fechaNac: string;
   username: string;
-  especialidad: string;
-  fechaAsig: string;
+  especialidades: string; 
+  fechaAsig: string;       
 };
 
 const cols: Array<[keyof Row, string]> = [
@@ -35,7 +34,7 @@ const cols: Array<[keyof Row, string]> = [
   ["email", "Email"],
   ["fechaNac", "Nacimiento"],
   ["username", "Usuario"],
-  ["especialidad", "Especialidad"],
+  ["especialidades", "Especialidades"],
   ["fechaAsig", "Asignación"],
 ];
 
@@ -50,41 +49,39 @@ export default function ProfesorTable({
 }: Props) {
   const [search, setSearch] = useState("");
 
-  // Combina profesores con sus asignaciones (si existen)
-  const rows = useMemo<Row[]>(
-    () =>
-      profesores.map(p => {
-        const pe = profesorEspecialidades.find(
-          pe => pe.profesor.usuario.id === p.usuario.id
-        );
-        return {
-          id:             p.usuario.id,
-          foto:           p.usuario.foto,
-          ci:             p.usuario.ci,
-          nombreCompleto: `${p.usuario.nombre} ${p.usuario.apellido}`,
-          sexo:           p.usuario.sexo,
-          email:          p.usuario.email,
-          fechaNac:       p.usuario.fecha_nacimiento?.slice(0,10) ?? "–",
-          username:       p.usuario.username,
-          especialidad:   pe?.especialidad?.nombre ?? "–",
-          fechaAsig:      pe ? pe.fecha_asignacion.slice(0,10) : "–",
-        };
-      }),
-    [profesores, profesorEspecialidades]
+  const rows = useMemo<Row[]>(() =>
+    profesores.map(p => {
+      const peList = profesorEspecialidades.filter(
+        pe => pe.profesor.usuario.id === p.usuario.id
+      );
+      const nombres = peList.map(pe => pe.especialidad.nombre);
+      const fechas = peList.map(pe => pe.fecha_asignacion.slice(0,10));
+      return {
+        id:             p.usuario.id,
+        foto:           p.usuario.foto,
+        ci:             p.usuario.ci,
+        nombreCompleto: `${p.usuario.nombre} ${p.usuario.apellido}`,
+        sexo:           p.usuario.sexo,
+        email:          p.usuario.email,
+        fechaNac:       p.usuario.fecha_nacimiento?.slice(0,10) ?? "–",
+        username:       p.usuario.username,
+        especialidades: nombres.length > 0 ? nombres.join(", ") : "–",
+        fechaAsig:      fechas.length > 0 ? fechas.join(", ") : "–",
+      };
+    }),
+  [profesores, profesorEspecialidades]
   );
 
-  // Filtro de búsqueda
   const filtered = useMemo(() => {
     const t = search.trim().toLowerCase();
     if (!t) return rows;
     return rows.filter(r =>
       r.nombreCompleto.toLowerCase().includes(t) ||
       r.username.toLowerCase().includes(t) ||
-      r.especialidad.toLowerCase().includes(t)
+      r.especialidades.toLowerCase().includes(t)
     );
   }, [search, rows]);
 
-  // Ordenamiento
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
       const A = a[sortKey] as any;
@@ -149,10 +146,18 @@ export default function ProfesorTable({
                 <td className="px-4 py-3 whitespace-nowrap">{r.nombreCompleto}</td>
                 <td className="px-4 py-3">{r.ci}</td>
                 <td className="px-4 py-3">{r.sexo}</td>
-                <td className="px-4 py-3">{r.email}</td>
+                <td className="px-4 py-3">
+                  <div className="truncate max-w-xs" title={r.email}>
+                    {r.email}
+                  </div>  
+                </td>
                 <td className="px-4 py-3">{r.fechaNac}</td>
                 <td className="px-4 py-3">{r.username}</td>
-                <td className="px-4 py-3">{r.especialidad}</td>
+                <td className="px-4 py-3">
+                  <div className="truncate max-w-xs" title={r.especialidades}>
+                    {r.especialidades || "–"}
+                  </div>
+                </td>
                 <td className="px-4 py-3">{r.fechaAsig}</td>
                 <td className="px-4 py-3 text-right">
                   <button onClick={() => onEdit(r.id)} className="mr-2 text-blue-600 hover:underline">
