@@ -62,7 +62,7 @@ export default function SuperAdminProfesor() {
       especialidad: {                           
         id: 0,
         nombre: "",
-        materia: { id: 0, nombre: "" }
+        materia: { id: 0, nombre: "" },
       },
       fecha_asignacion: ""                     
     };

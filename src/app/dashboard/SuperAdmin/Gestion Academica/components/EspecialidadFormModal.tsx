@@ -25,13 +25,13 @@ export default function EspecialidadFormModal({
   onSave,
 }: Props) {
   const [selectedColegioId, setSelectedColegioId] = useState<number>(
-    initial?.grado.unidad_educativa.colegio.id ?? 0
+    initial?.grado?.unidad_educativa?.colegio?.id ?? 0
   );
   const [selectedUnidadId, setSelectedUnidadId] = useState<number>(
-    initial?.grado.unidad_educativa.id ?? 0
+    initial?.grado?.unidad_educativa.id ?? 0
   );
   const [selectedGradoId, setSelectedGradoId] = useState<number>(
-    initial?.grado.id ?? 0
+    initial?.grado?.id ?? 0
   );
   const [selectedMateriaId, setSelectedMateriaId] = useState<number>(
     initial?.materia.id ?? 0

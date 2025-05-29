@@ -7,7 +7,7 @@ export interface Especialidad {
   id: number;
   nombre: string;
   materia: Materia;
-  grado: Grado;
+  grado?: Grado;
 }
 
 export interface Profesor {
