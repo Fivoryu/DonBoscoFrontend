@@ -29,6 +29,7 @@ export default function BitacoraUsuarioPage() {
     if (!usuarioId) return;
     setLoading(true);
     setError("");
+    console.log("Entrando a bitacora")
 
     AxiosInstance.get("/user/auth/bitacoras/listar/", {
       params: { usuario: usuarioId, page },
