@@ -115,19 +115,24 @@ export default function GradoFormModal({ initial, unidades, colegios, onCancel, 
     };
 
     // Busca el nombre largo del nivel según la unidad educativa seleccionada
-    const unidad = unidades.find(u => u.id === Number(form.unidad_educativa));
-    const nivelNombre = unidad?.nivel || ''; // Por ejemplo: "Primaria"
+    const unidad = unidades.find(u => u.id === form.unidad_educativa.id);
+    const displayNivel = unidad?.nivel; 
 
-    // Convierte al código esperado
-    const nivelCorto = nivelMap[nivelNombre] || form.nivel_educativo;
+    if (!displayNivel) {
+      alert("No se pudo determinar el nivel educativo.");
+      return;
+    }
+
+    const nivelCorto = nivelMap[displayNivel] || form.nivel_educativo;
 
     // Prepara el objeto a enviar con el nivel corto correcto
     const payload = {
-      ...form,
-      nivel_educativo: nivelCorto,
-    };
+    unidad_educativa: form.unidad_educativa.id,  // <-- sólo el PK
+    nivel_educativo: nivelCorto,                 // <-- 'PRI', 'INI' o 'SEC'
+    numero: form.numero,
+  };
 
-    onSave(payload);
+    onSave(payload as any);
   };
 
   return (
