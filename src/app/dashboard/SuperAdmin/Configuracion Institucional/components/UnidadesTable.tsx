@@ -19,7 +19,6 @@ const colsH: Array<[keyof UnidadEducativa, string]> =[
   ["colegio", "Colegio"],
   ["direccion", "Direccion"],
   ["nivel", "Nivel"],
-  ["admin", "Administrador"],
   ["telefono", "Telefono"],
 ]
 
@@ -43,7 +42,6 @@ export default function UnidadesTable({
         if (u.colegio?.nombre.toLowerCase().includes(term)) return true;
         if (u.direccion?.toLowerCase().includes(term)) return true;
         if (u.nivel?.toLowerCase().includes(term)) return true;
-        if (u.admin?.usuario.nombre.toLowerCase().includes(term)) return true;
         if (u.telefono?.toLowerCase().includes(term)) return true;
 
         return false;
@@ -115,7 +113,6 @@ export default function UnidadesTable({
                   <td className="px-4 py-3">{u.colegio?.nombre}</td>
                   <td className="px-4 py-3">{u.direccion}</td>
                   <td className="px-4 py-3">{u.nivel}</td>
-                  <td className="px-4 py-3">{u.admin?.usuario.nombre}</td>
                   <td className="px-4 py-3">{u.telefono}</td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => onEdit(u)} className="mr-2 text-blue-600 hover:underline">

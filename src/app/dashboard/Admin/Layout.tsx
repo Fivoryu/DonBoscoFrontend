@@ -1,29 +1,21 @@
-// src/app/dashboard/SuperAdminLayout.tsx
-
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AxiosInstance from "@/components/AxiosInstance";
-import PerfilModal from "./Gestion Usuarios/Perfil";
-import { Usuario } from "@/app/modelos/Usuarios";
+import PerfilModal from "../SuperAdmin/Gestion Usuarios/Perfil";
+import { Admin, Usuario } from "@/app/modelos/Usuarios";
 import SuperAdminSB from "../Sidebar/SuperAdminSB";
 import clsx from "clsx";
 import { useAuth } from "@/app/contexts/AuthContext";
-import {
-  SIDEBAR_SECTIONS_SUPERADMIN,
-  SIDEBAR_SECTIONS_ADMIN,
-  SIDEBAR_SECTIONS_PROFESOR,
-} from "../Sidebar/SidebarConfig";
+import { SIDEBAR_SECTIONS_ADMIN } from "../Sidebar/SidebarConfig";
 
 function isFile(x: unknown): x is File {
   return x instanceof File;
 }
 
-const SuperAdminLayout: React.FC = () => {
-  // 1) Estado para controlar si el sidebar está abierto
+export const AdminLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-
-  // 2) Estados para el perfil y el modal
   const [user, setUser] = useState<Usuario | null>(null);
+  const [admin, setAdmin] = useState<Admin | null>(null);
   const [showPerfil, setShowPerfil] = useState<boolean>(false);
 
   // Carga el perfil al montar
@@ -32,16 +24,23 @@ const SuperAdminLayout: React.FC = () => {
       const resp = await AxiosInstance.get<Usuario>("/user/auth/usuarios/perfil/");
       setUser(resp.data);
     } catch (error) {
-      console.error("Error obteniendo perfil:", error);
       setUser(null);
     }
   };
+
+  // Cargar datos de admin cuando se tenga el usuario
+  useEffect(() => {
+    if (user?.id) {
+      AxiosInstance.get<Admin>(`/user/auth/admins/${user.id}/`)
+        .then(res => setAdmin(res.data))
+        .catch(() => setAdmin(null));
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchPerfil();
   }, []);
 
-  // Volver a cargar perfil si se abre el modal (opcional)
   useEffect(() => {
     if (showPerfil) {
       fetchPerfil();
@@ -49,14 +48,6 @@ const SuperAdminLayout: React.FC = () => {
   }, [showPerfil]);
 
   const { user: authUser } = useAuth();
-
-  // Elige la config según el rol
-  let sidebarSections = SIDEBAR_SECTIONS_SUPERADMIN;
-  if (authUser) {
-    const rol = authUser.rol.nombre.toLowerCase();
-    if (rol === "admin") sidebarSections = SIDEBAR_SECTIONS_ADMIN;
-    else if (rol === "profesor") sidebarSections = SIDEBAR_SECTIONS_PROFESOR;
-  }
 
   return (
     <>
@@ -66,18 +57,14 @@ const SuperAdminLayout: React.FC = () => {
           sidebarOpen ? "md:pl-64" : "md:pl-16"
         )}
       >
-        {/* Sidebar: le pasamos el estado y la función para alternarlo */}
         <SuperAdminSB
           openSide={sidebarOpen}
           onToggle={() => setSidebarOpen((o) => !o)}
-          sections={sidebarSections} // <-- pasa la config correcta
+          sections={SIDEBAR_SECTIONS_ADMIN}
         />
 
-        {/* Contenido principal */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* HEADER */}
           <header className="bg-white shadow flex items-center justify-between px-6 py-3">
-            {/* Botón hamburguesa en mobile (< md) */}
             <button
               onClick={() => setSidebarOpen((o) => !o)}
               className="md:hidden p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -106,13 +93,16 @@ const SuperAdminLayout: React.FC = () => {
                 </svg>
               )}
             </button>
-
-            {/* Título centrado en mobile, alineado a la izquierda en desktop */}
-            <h1 className="flex-1 text-center md:text-left text-xl font-semibold text-blue-600">
-              Panel Super Admin
-            </h1>
-
-            {/* Botón “Mi Perfil”: oculto en xs, visible en sm+ */}
+            <div className="flex-1 flex flex-col md:flex-row md:items-center md:gap-4">
+              <span className="text-xl font-semibold text-blue-600 text-center md:text-left">
+                Panel de {authUser?.nombre ?? "Usuario"}
+              </span>
+              {admin?.puesto?.nombre && (
+                <span className="text-sm text-gray-500 text-center md:text-left">
+                  Puesto: {admin.puesto.nombre}
+                </span>
+              )}
+            </div>
             <button
               onClick={() => setShowPerfil(true)}
               className="hidden sm:inline-block ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -120,15 +110,11 @@ const SuperAdminLayout: React.FC = () => {
               MI PERFIL
             </button>
           </header>
-
-          {/* MAIN (Outlet de rutas) */}
           <main className="p-6 flex-1 overflow-y-auto">
             <Outlet />
           </main>
         </div>
       </div>
-
-      {/* Modal de Perfil */}
       {showPerfil && user && (
         <PerfilModal
           user={{
@@ -141,7 +127,7 @@ const SuperAdminLayout: React.FC = () => {
           }}
           onClose={() => setShowPerfil(false)}
           onSave={(data: Usuario) => {
-            console.log("Guardar perfil:", data);
+            console.log("Perfil actualizado:", data);
             // Aquí llamarías a tu API para actualizar el perfil
           }}
         />
@@ -150,4 +136,4 @@ const SuperAdminLayout: React.FC = () => {
   );
 };
 
-export default SuperAdminLayout;
+export default AdminLayout;

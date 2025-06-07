@@ -1,6 +1,8 @@
 // Usuarios.tsx
 // Clases TypeScript que representan los modelos Django definidos en el backend.
 
+import { UnidadEducativa } from "./Institucion";
+
 export class Rol {
   id: number;
   nombre: string;
@@ -34,6 +36,7 @@ export class Usuario {
   is_staff: boolean;
   is_active: boolean;
   date_joined: string;
+  puesto?: Puesto; // <-- agrega esta línea
 
   constructor(data: {
     id: number;
@@ -52,6 +55,7 @@ export class Usuario {
     is_staff: boolean;
     is_active: boolean;
     date_joined: string;
+    puesto?: Puesto; // <-- agrega esta línea
   }) {
     this.id = data.id;
     this.ci = data.ci;
@@ -69,6 +73,7 @@ export class Usuario {
     this.is_staff = data.is_staff;
     this.is_active = data.is_active;
     this.date_joined = data.date_joined;
+    this.puesto = data.puesto; // <-- agrega esta línea
   }
 }
 
@@ -110,23 +115,36 @@ export class SuperAdmin {
   }
 }
 
-export class Admin {
+export type Puesto = {
+  id: number;
+  nombre: string;
+  descripcion?: string | null;
+};
+
+export type Accion = {
+  id: number;
+  nombre: string;
+};
+
+export type ModeloPermitido = {
+  id: number;
+  nombre: string;
+};
+
+export type PermisoPuesto = {
+  id: number;
+  puesto: Puesto;
+  modelo: ModeloPermitido;
+  accion: Accion;
+};
+
+
+export interface Admin {
   usuarioId: number;
   usuario: Usuario;
-  puesto?: string | null;
+  puesto?: Puesto;
+  unidad: UnidadEducativa;
   estado: boolean;
-
-  constructor(data: {
-    usuarioId: number;
-    usuario: Usuario;
-    puesto?: string | null;
-    estado: boolean;
-  }) {
-    this.usuarioId = data.usuarioId;
-    this.usuario = data.usuario;
-    this.puesto = data.puesto ?? null;
-    this.estado = data.estado;
-  }
 }
 
 export type AccionBitacora = 'crear' | 'editar' | 'eliminar' | 'listar' | 'otro';

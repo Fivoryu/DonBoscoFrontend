@@ -25,6 +25,13 @@ import SuperAdminMateriaCurso from "./app/dashboard/SuperAdmin/Gestion Academica
 import SuperAdminProfesor from "./app/dashboard/SuperAdmin/Gestion Academica/Profesor";
 import SuperAdminEspecialidad from "./app/dashboard/SuperAdmin/Gestion Academica/Especialidades";
 import BitacoraUsuarioPage from "./app/dashboard/SuperAdmin/Gestion Usuarios/BitacoraUsuarioPage";
+import { SuperAdminAdmins } from "./app/dashboard/SuperAdmin/Gestion Usuarios/Admins";
+import SuperAdminPuestos from "./app/dashboard/SuperAdmin/Gestion Usuarios/Puestos";
+import AdminLayout from "./app/dashboard/Admin/Layout";
+import AdminInicio from "./app/dashboard/Admin/Inicio";
+import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
+
+
 
 export const Routes: RouteObject[] = [
   {
@@ -42,7 +49,7 @@ export const Routes: RouteObject[] = [
   {
     path: "/dashboard/superadmin",
     element: ( 
-      <RequireAuth requireRole="superadmin">
+      <RequireAuth allowedRoles={["superadmin"]}>
         <SuperAdminLayout />
       </RequireAuth>
     ),
@@ -51,6 +58,8 @@ export const Routes: RouteObject[] = [
       { path: "colegios", element: <SuperAdminColegios /> },
       { path: "unidades", element: <SuperAdminUnidades /> },
       { path: "usuarios", element: <SuperAdminUsuarios /> },
+      { path: "admin", element: <SuperAdminAdmins /> },
+      { path: "permisos", element: <SuperAdminPuestos /> },
       { path: "infraestructura", element: <SuperAdminInfraestructura /> },
       { path: "profesor", element: <SuperAdminProfesor />},
       { path: "grados", element: <SuperAdminGrados /> },
@@ -66,6 +75,17 @@ export const Routes: RouteObject[] = [
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>}
     ],
-  },
+  }, {
+    path: "/dashboard/admin/",
+    element: (
+      <RequireAuth allowedRoles={["admin"]}>
+        <AdminLayout />
+      </RequireAuth>
+    ),
+    children: [
+      { index: true, element: <AdminInicio />},
+      { path: "modulos", element: <AdminModulos /> },
+    ]
+  }
   // { path: "*", element: <NotFound /> }
 ];

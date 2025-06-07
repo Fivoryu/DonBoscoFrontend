@@ -51,7 +51,6 @@ export interface Aula {
 import { Turno } from "./Calendario";
 
 /** Unidad Educativa */
-import { Admin } from "./Usuarios";
 export interface UnidadEducativa {
   id: number;
   codigo_sie: string;
@@ -60,6 +59,5 @@ export interface UnidadEducativa {
   direccion?: string | null;
   telefono?: string | null;
   nivel?: string | null;
-  admin?: Admin
   colegio: Colegio;
 }

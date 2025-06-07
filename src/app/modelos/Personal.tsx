@@ -2,6 +2,7 @@
 
 import { Materia, Grado } from "@/app/modelos/Academico";
 import { Usuario } from "@/app/modelos/Usuarios";
+import { UnidadEducativa } from "./Institucion";
 
 export interface Especialidad {
   id: number;
@@ -14,6 +15,7 @@ export interface Profesor {
   /** la PK es el mismo usuario.id */
   usuario: Usuario;
   estado: boolean;
+  unidad: UnidadEducativa
 }
 
 export interface ProfesorEspecialidad {

@@ -1,21 +1,28 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-interface Props {
+interface RequireAuthProps {
   children: JSX.Element;
-  requireRole?: string;
+  allowedRoles?: string[];
 }
 
-export default function RequireAuth({ children, requireRole }: Props): JSX.Element {
-  const { user, loading } = useAuth();
-  const loc = useLocation();
+export default function RequireAuth({
+  children,
+  allowedRoles,
+}: RequireAuthProps): JSX.Element {
+  const { user, loading, hasRole } = useAuth();
+  const location = useLocation();
 
-  if (loading) return <div className="w-full h-full flex items-center justify-center">Cargando...</div>;
-  if (!user) {
-    return <Navigate to="/login" state={{ from: loc }} replace />;
+  if (loading) {
+    return <div>Cargando...</div>;
   }
-  if (requireRole && user.rol.nombre !== requireRole) {
-    return <Navigate to="/dashboard/no-permission" state={{ from: loc }} replace />;
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (allowedRoles && allowedRoles.length > 0 && !hasRole(allowedRoles)) {
+    return <Navigate to="/dashboard/no-permission" replace />;
   }
 
   return children;

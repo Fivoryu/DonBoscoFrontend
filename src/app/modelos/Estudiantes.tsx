@@ -1,5 +1,6 @@
 // src/app/modelos/Personal.ts
 import { Usuario } from "./Usuarios";
+import { UnidadEducativa } from "./Institucion";
 import { Curso } from "./Academico";
 
 export interface Estudiante {
@@ -7,6 +8,7 @@ export interface Estudiante {
   rude: string;
   estado: boolean;
   curso?: Curso;
+  unidad: UnidadEducativa;
 }
 
 export interface Tutor {
