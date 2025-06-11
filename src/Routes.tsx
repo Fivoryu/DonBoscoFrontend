@@ -30,6 +30,8 @@ import SuperAdminPuestos from "./app/dashboard/SuperAdmin/Gestion Usuarios/Puest
 import AdminLayout from "./app/dashboard/Admin/Layout";
 import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
+import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
+import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
 
 
@@ -75,7 +77,9 @@ export const Routes: RouteObject[] = [
       { path: "materia", element: <SuperAdminMateria />},
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
-      { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>}
+      { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
+      { path: "alumnos", element: <SuperAdminEstudiantes /> },
+      {path: "tutores", element: <SuperAdminTutor />},
     ],
   }, {
     path: "/dashboard/admin/",

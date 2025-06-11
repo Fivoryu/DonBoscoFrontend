@@ -37,7 +37,7 @@ export default function UnidadFormModal({
         colegioId: initial.colegio.id,
         nombre:    initial.nombre ?? "",
         codigoSie: initial.codigo_sie,
-        turno:     initial.turno,
+        turno:     initial.turno ?? "Mañana",
         nivel:     initial.nivel ?? "Inicial",
         direccion: initial.direccion ?? "",
         telefono:  initial.telefono ?? "",

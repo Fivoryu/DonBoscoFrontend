@@ -9,6 +9,8 @@ interface Props {
   initial: Usuario | null;
   onCancel: () => void;
   onSave: (updated: Usuario) => void;
+  defaultRolNombre?: string; 
+  extraFields?: any;  
 }
 
 const getRolNombreById = (id: number): string => {
@@ -33,9 +35,10 @@ type FormType = Usuario & {
   rude?: string;
   tutorCi?: string;
   tutorParentesco?: string;
-  parentesco?: string;
+  parentesco?: "PAD" | "MAD" | "TUT" | "HER" | "OTR";
   hijoCi?: string;
   puesto?: string;
+  
 };
 
 
@@ -44,26 +47,29 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
   const [form, setForm] = useState<FormType>(
     // inicializa con los campos de Usuario + undefined para los extras
     initial
-      ? { ...initial }
+      ? {
+        ...initial,
+        puesto: initial.puesto?.id.toString(), 
+      } as FormType
       : ({
-          id: 0,
-          ci: "",
-          nombre: "",
-          apellido: "",
-          email: "",
-          username: "",
-          foto: null,
-          fecha_nacimiento: "",
-          rol: { id: 0, nombre: "" },
-          password: null,
-          estado: true,
-          is_staff: false,
-          is_active: true,
-          date_joined: new Date().toISOString(),
-          sexo: "",
-          telefono: null,
-          // campos extra quedan undefined
-        } as FormType)
+        id: 0,
+        ci: "",
+        nombre: "",
+        apellido: "",
+        email: "",
+        username: "",
+        foto: null,
+        fecha_nacimiento: "",
+        rol: { id: 0, nombre: "" },
+        password: null,
+        estado: true,
+        is_staff: false,
+        is_active: true,
+        date_joined: new Date().toISOString(),
+        sexo: "",
+        telefono: null,
+        // campos extra quedan undefined
+      } as FormType)
   );
 
   const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
@@ -109,20 +115,20 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
     formData.append("username", form.username);
     formData.append("rol_id", String(form.rol.id));
 
-    if (form.especialidadId)   formData.append("especialidad_id", String(form.especialidadId));
-    if (form.rude)             formData.append("rude", form.rude);
-    if (form.tutorCi)          formData.append("tutor_ci", form.tutorCi);
-    if (form.tutorParentesco)  formData.append("parentesco", form.tutorParentesco);
-    if (form.hijoCi)           formData.append("hijo_ci", form.hijoCi);
-    if (form.parentesco)       formData.append("parentesco", form.parentesco);
-    if (form.puesto)           formData.append("puesto", form.puesto);
-    if (form.password)      formData.append("password", form.password);
-    if (form.telefono)      formData.append("telefono", form.telefono);
+    if (form.especialidadId) formData.append("especialidad_id", String(form.especialidadId));
+    if (form.rude) formData.append("rude", form.rude);
+    if (form.tutorCi) formData.append("tutor_ci", form.tutorCi);
+    if (form.tutorParentesco) formData.append("parentesco", form.tutorParentesco);
+    if (form.hijoCi) formData.append("hijo_ci", form.hijoCi);
+    if (form.parentesco) formData.append("parentesco", form.parentesco);
+    if (form.puesto) formData.append("puesto", form.puesto);
+    if (form.password) formData.append("password", form.password);
+    if (form.telefono) formData.append("telefono", form.telefono);
     if (form.fecha_nacimiento)
-                            formData.append("fecha_nacimiento", form.fecha_nacimiento);
-    if (form.sexo)          formData.append("sexo", form.sexo);
+      formData.append("fecha_nacimiento", form.fecha_nacimiento);
+    if (form.sexo) formData.append("sexo", form.sexo);
     if (form.foto && (form.foto as any) instanceof File)
-                            formData.append("foto", form.foto);
+      formData.append("foto", form.foto);
 
     // ¡Clave! envia rol_id, no rol
     if (form.rol && form.rol.id) {
@@ -152,7 +158,7 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
   };
 
   return (
-    <FormModal 
+    <FormModal
       title={form.id ? "Editar Usuario" : "Nuevo Usuario"}
       onCancel={onCancel}
       onSubmit={handleSubmit}
@@ -224,157 +230,103 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
         />
       </div>
       <div>
-          <label>Rol</label>
+        <label>Rol</label>
+        <select
+          name="rol"
+          value={form.rol.id}
+          onChange={e => {
+            const id = Number(e.target.value);
+            setForm(f => ({
+              ...f,
+              rol: { id, nombre: getRolNombreById(id).toLowerCase() },
+              // limpia campos extra al cambiar rol
+              especialidadId: undefined,
+              rude: undefined,
+              tutorCi: undefined,
+              tutorParentesco: undefined,
+              parentesco: undefined,
+              hijoCi: undefined,
+              puesto: undefined,
+            }));
+          }}
+        >
+          <option value="">— Selecciona —</option>
+          <option value="2">SuperAdmin</option>
+          <option value="3">Admin</option>
+          <option value="4">Estudiante</option>
+          <option value="5">Profesor</option>
+          <option value="6">Tutor</option>
+        </select>
+      </div>
+
+      {/* 5) Campos condicionales */}
+      {/* PROFESOR */}
+      {form.rol.id === 5 && (
+        <div className="col-span-2">
+          <label>Especialidad (opcional)</label>
           <select
-            name="rol"
-            value={form.rol.id}
-            onChange={e => {
-              const id = Number(e.target.value);
-              setForm(f => ({
-                ...f,
-                rol: { id, nombre: getRolNombreById(id).toLowerCase() },
-                // limpia campos extra al cambiar rol
-                especialidadId: undefined,
-                rude: undefined,
-                tutorCi: undefined,
-                tutorParentesco: undefined,
-                parentesco: undefined,
-                hijoCi: undefined,
-                puesto: undefined,
-              }));
-            }}
+            name="especialidadId"
+            value={form.especialidadId ?? ""}
+            onChange={handleChange}
+            className="w-full border rounded p-2"
           >
             <option value="">— Selecciona —</option>
-            <option value="2">SuperAdmin</option>
-            <option value="3">Admin</option>
-            <option value="4">Estudiante</option>
-            <option value="5">Profesor</option>
-            <option value="6">Tutor</option>
+            {especialidades.map(e => (
+              <option key={e.id} value={e.id}>
+                {e.nombre}
+              </option>
+            ))}
           </select>
         </div>
+      )}
 
-        {/* 5) Campos condicionales */}
-        {/* PROFESOR */}
-        {form.rol.id === 5 && (
+      {/* ESTUDIANTE */}
+      {form.rol.id === 4 && (
+        <>
           <div className="col-span-2">
-            <label>Especialidad (opcional)</label>
+            <label>RUDE</label>
+            <input
+              name="rude"
+              value={form.rude ?? ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+          </div>
+          <div>
+            <label>CI Tutor (opcional)</label>
             <select
-              name="especialidadId"
-              value={form.especialidadId ?? ""}
+              name="tutorCi"
+              value={form.tutorCi ?? ""}
               onChange={handleChange}
               className="w-full border rounded p-2"
             >
               <option value="">— Selecciona —</option>
-              {especialidades.map(e => (
-                <option key={e.id} value={e.id}>
-                  {e.nombre}
+              {tutores.map(t => (
+                <option key={t.usuario.ci} value={t.usuario.ci}>
+                  {t.usuario.ci}
                 </option>
               ))}
             </select>
-          </div>
-        )}
-
-        {/* ESTUDIANTE */}
-        {form.rol.id === 4 && (
-          <>
-            <div className="col-span-2">
-              <label>RUDE</label>
-              <input
-                name="rude"
-                value={form.rude ?? ""}
-                onChange={handleChange}
-                className="w-full border rounded p-2"
-              />
-            </div>
-            <div>
-              <label>CI Tutor (opcional)</label>
-              <select
-                name="tutorCi"
-                value={form.tutorCi ?? ""}
-                onChange={handleChange}
-                className="w-full border rounded p-2"
-              >
-                <option value="">— Selecciona —</option>
-                {tutores.map(t => (
-                  <option key={t.usuario.ci} value={t.usuario.ci}>
-                    {t.usuario.ci}
-                  </option>
-                ))}
-              </select>
-              {form.tutorCi && (
-                <p className="mt-1">
-                  Nombre:{" "}
-                  {
-                    tutores.find(t => t.usuario.ci === form.tutorCi)!
-                      .usuario.nombre
-                  }{" "}
-                  {
-                    tutores.find(t => t.usuario.ci === form.tutorCi)!
-                      .usuario.apellido
-                  }
-                </p>
-              )}
-            </div>
             {form.tutorCi && (
-              <div>
-                <label>Parentesco</label>
-                <select
-                  name="tutorParentesco"
-                  value={form.tutorParentesco ?? ""}
-                  onChange={handleChange}
-                  className="w-full border rounded p-2"
-                >
-                  <option value="">— Selecciona —</option>
-                  <option value="PAD">Padre</option>
-                  <option value="MAD">Madre</option>
-                  <option value="TUT">Tutor Legal</option>
-                  <option value="HER">Hermano/a</option>
-                  <option value="OTR">Otro</option>
-                </select>
-              </div>
+              <p className="mt-1">
+                Nombre:{" "}
+                {
+                  tutores.find(t => t.usuario.ci === form.tutorCi)!
+                    .usuario.nombre
+                }{" "}
+                {
+                  tutores.find(t => t.usuario.ci === form.tutorCi)!
+                    .usuario.apellido
+                }
+              </p>
             )}
-          </>
-        )}
-
-        {/* TUTOR */}
-        {form.rol.id === 6 && (
-          <>
-            <div>
-              <label>CI Hijo</label>
-              <select
-                name="hijoCi"
-                value={form.hijoCi ?? ""}
-                onChange={handleChange}
-                className="w-full border rounded p-2"
-              >
-                <option value="">— Selecciona —</option>
-                {estudiantes.map(e => (
-                  <option key={e.usuario.ci} value={e.usuario.ci}>
-                    {e.usuario.ci}
-                  </option>
-                ))}
-              </select>
-              {form.hijoCi && (
-                <p className="mt-1">
-                  Nombre:{" "}
-                  {
-                    estudiantes.find(
-                      e => e.usuario.ci === form.hijoCi
-                    )!.usuario.nombre
-                  }{" "}
-                  {
-                    estudiantes.find(
-                      e => e.usuario.ci === form.hijoCi
-                    )!.usuario.apellido
-                  }
-                </p>
-              )}
-            </div>
+          </div>
+          {form.tutorCi && (
             <div>
               <label>Parentesco</label>
               <select
-                name="parentesco"
-                value={form.parentesco ?? ""}
+                name="tutorParentesco"
+                value={form.tutorParentesco ?? ""}
                 onChange={handleChange}
                 className="w-full border rounded p-2"
               >
@@ -386,21 +338,75 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
                 <option value="OTR">Otro</option>
               </select>
             </div>
-          </>
-        )}
+          )}
+        </>
+      )}
 
-        {/* ADMIN */}
-        {form.rol.id === 3 && (
-          <div className="col-span-2">
-            <label>Puesto</label>
-            <input
-              name="puesto"
-              value={form.puesto ?? ""}
+      {/* TUTOR */}
+      {form.rol.id === 6 && (
+        <>
+          <div>
+            <label>CI Hijo</label>
+            <select
+              name="hijoCi"
+              value={form.hijoCi ?? ""}
               onChange={handleChange}
               className="w-full border rounded p-2"
-            />
+            >
+              <option value="">— Selecciona —</option>
+              {estudiantes.map(e => (
+                <option key={e.usuario.ci} value={e.usuario.ci}>
+                  {e.usuario.ci}
+                </option>
+              ))}
+            </select>
+            {form.hijoCi && (
+              <p className="mt-1">
+                Nombre:{" "}
+                {
+                  estudiantes.find(
+                    e => e.usuario.ci === form.hijoCi
+                  )!.usuario.nombre
+                }{" "}
+                {
+                  estudiantes.find(
+                    e => e.usuario.ci === form.hijoCi
+                  )!.usuario.apellido
+                }
+              </p>
+            )}
           </div>
-        )}
-    </FormModal>    
+          <div>
+            <label>Parentesco</label>
+            <select
+              name="parentesco"
+              value={form.parentesco ?? ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            >
+              <option value="">— Selecciona —</option>
+              <option value="PAD">Padre</option>
+              <option value="MAD">Madre</option>
+              <option value="TUT">Tutor Legal</option>
+              <option value="HER">Hermano/a</option>
+              <option value="OTR">Otro</option>
+            </select>
+          </div>
+        </>
+      )}
+
+      {/* ADMIN */}
+      {form.rol.id === 3 && (
+        <div className="col-span-2">
+          <label>Puesto</label>
+          <input
+            name="puesto"
+            value={form.puesto ?? ""}
+            onChange={handleChange}
+            className="w-full border rounded p-2"
+          />
+        </div>
+      )}
+    </FormModal>
   );
 }

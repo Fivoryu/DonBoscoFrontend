@@ -17,50 +17,75 @@ export default function SuperAdminUsuarios() {
 
   // Carga inicial
   useEffect(() => {
+    console.log("🔄 Cargando usuarios...");
     setLoading(true);
     AxiosInstance.get<Usuario[]>("/user/auth/usuarios/listar-usuarios/")
-      .then((res) => setUsuarios(res.data))
-      .catch(() => setError("No se pudieron cargar los usuarios."))
-      .finally(() => setLoading(false));
+      .then((res) => {
+        console.log("✅ Usuarios cargados:", res.data);
+        setUsuarios(res.data);
+      })
+      .catch((err) => {
+        console.error("❌ Error al cargar usuarios:", err);
+        setError("No se pudieron cargar los usuarios.");
+      })
+      .finally(() => {
+        console.log("✅ Carga finalizada.");
+        setLoading(false);
+      });
   }, []);
 
   // Ordenamiento
   const toggleSort = (key: keyof Usuario) => {
-    if (key === sortKey) setAsc(!asc);
-    else {
+    console.log("↕ Ordenando por:", key);
+    if (key === sortKey) {
+      setAsc(!asc);
+      console.log("🔁 Cambio de orden:", !asc ? "Ascendente" : "Descendente");
+    } else {
       setSortKey(key);
       setAsc(true);
+      console.log("🔀 Nuevo campo de orden:", key);
     }
   };
 
   // Borra usuario
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar este usuario?")) return;
+    console.log("🗑️ Eliminando usuario con ID:", id);
     try {
       await AxiosInstance.delete(`/user/auth/usuarios/${id}/eliminar/`);
       setUsuarios((prev) => prev.filter((u) => u.id !== id));
-    } catch {
+      console.log("✅ Usuario eliminado:", id);
+    } catch (err) {
+      console.error("❌ Error al eliminar usuario:", err);
       alert("Error al eliminar usuario.");
     }
   };
 
   // Abre modal en modo “nuevo” o “editar”
   const handleEdit = (u: Usuario | null) => {
+    if (u) {
+      console.log("✏️ Editando usuario:", u);
+    } else {
+      console.log("🆕 Creando nuevo usuario");
+    }
     setEditUser(u);
     setModalOpen(true);
   };
 
   // Guarda cambios (crea o edita)
   const handleSave = (u: Usuario) => {
-    // delegamos a UsuarioFormModal que devuelva el objeto completo
+    console.log("💾 Usuario guardado desde modal:", u);
+
     const onSuccess = (updated: Usuario) => {
+      console.log("🔄 Actualizando lista local de usuarios...");
       setUsuarios((prev) =>
         updated.id
           ? prev.map((x) => (x.id === updated.id ? updated : x))
           : [...prev, updated]
       );
+      console.log("✅ Lista de usuarios actualizada.");
     };
-    // simplemente cerramos el modal; la petición ya la hace el modal
+
     handleEdit(null);
     onSuccess(u);
   };
@@ -77,11 +102,11 @@ export default function SuperAdminUsuarios() {
         </button>
       </header>
 
-      
+
 
       {loading && <div className="text-center">Cargando…</div>}
       {error && <div className="text-red-600 text-center">{error}</div>}
-      
+
 
       {!loading && !error && (
         <UsuariosTable
