@@ -91,6 +91,13 @@ export const SIDEBAR_SECTIONS_SUPERADMIN: SidebarSection[] = [
       { to: "/dashboard/superadmin/especialidad", label: "Especialidad", icon: FileType, roles: ["superadmin", "admin"] },
       { to: "/dashboard/superadmin/profesor", label: "Profesor", icon: FaChalkboardTeacher, roles: ["superadmin", "admin"] },
       { to: "/dashboard/superadmin/grados", label: "Grados", icon: School, roles: ["superadmin", "admin", "profesor"] },
+    ],
+  },
+  {
+    title: "Gestión Estudiantil",
+    titleIcon: Layers,
+    roles: ["superadmin", "admin", "profesor"], // “profesor” también ve la sección, pero quizá no todos los ítems
+    items: [
       { to: "/dashboard/superadmin/alumnos", label: "Alumnos", icon: PiStudentLight, roles:["superadmin"]},
       { to: "/dashboard/superadmin/tutores", label: "Tutores", icon: RiParentLine, roles: ["superadmin", "admin"] },
     ],

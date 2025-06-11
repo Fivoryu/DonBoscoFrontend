@@ -54,7 +54,7 @@ import { Turno } from "./Calendario";
 export interface UnidadEducativa {
   id: number;
   codigo_sie: string;
-  turno: Turno;
+  turno?: Turno;
   nombre: string;
   direccion?: string | null;
   telefono?: string | null;
