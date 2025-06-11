@@ -25,9 +25,10 @@ function generarNombreGrado(nivel: string, numero: number): string {
   return `${numero}${suf} de ${nombreNivel}`;
 }
 
+
 export default function GradoFormModal({ initial, unidades, colegios, onCancel, onSave }: Props) {
   const [form, setForm] = useState<Grado>(
-    initial ?? { id: 0, nivel_educativo: "PRI", unidad_educativa: null as unknown as UnidadEducativa, numero: 1, nombre: "" }
+    initial ?? { id: 0, nivel_educativo: "PRI", unidad_educativa: undefined as unknown as UnidadEducativa, numero: 1, nombre: "" }
   );
 
   const [colegioId, setColegioId] = useState<number | null>(null);
@@ -134,76 +135,83 @@ export default function GradoFormModal({ initial, unidades, colegios, onCancel, 
 
     onSave(payload as any);
   };
-
+  
   return (
-    <FormModal title={form.id ? "Editar Grado" : "Nuevo Grado"} onCancel={onCancel} onSubmit={handleSubmit}>
-      <div>
-        <label className="block mb-1">Colegio</label>
-        <select value={colegioId ?? ""} onChange={handleChange} name="colegio" className="w-full border rounded p-2">
-          <option value="" disabled>
-            Seleccione colegio
-          </option>
-          {colegios.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nombre}
+    <FormModal 
+      title={form.id ? "Editar Grado" : "Nuevo Grado"} 
+      onCancel={onCancel} 
+      onSubmit={handleSubmit}
+      submitLabel="Guardar"
+    >
+      <div className="grid grap-4">
+        <div>
+          <label className="block mb-1">Colegio</label>
+          <select value={colegioId ?? ""} onChange={handleChange} name="colegio" className="w-full border rounded p-2">
+            <option value="" disabled>
+              Seleccione colegio
             </option>
-          ))}
-        </select>
-      </div>
+            {colegios.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label className="block mb-1">Unidad Educativa</label>
-        <select
-          name="unidad_educativa"
-          value={Number(form.unidad_educativa)}
-          onChange={e => handleUnidadChange(Number(e.target.value))}
-          className="w-full border rounded p-2"
-        >
-          <option value={0} disabled>Seleccione unidad</option>
-          {unidadesFiltradas.map(u => (
-            <option key={u.id} value={u.id}>{u.nombre}</option>
-          ))}
-        </select>
-      </div>
+        <div>
+          <label className="block mb-1">Unidad Educativa</label>
+          <select
+            name="unidad_educativa"
+            value={Number(form.unidad_educativa)}
+            onChange={e => handleUnidadChange(Number(e.target.value))}
+            className="w-full border rounded p-2"
+          >
+            <option value={0} disabled>Seleccione unidad</option>
+            {unidadesFiltradas.map(u => (
+              <option key={u.id} value={u.id}>{u.nombre}</option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label className="block mb-1">Nivel Educativo</label>
-        <input
-          type="text"
-          value={
-            form.unidad_educativa
-              ? unidades.find(u => u.id === Number(form.unidad_educativa))?.nivel || ""
-              : ""
-          }
-          readOnly
-          className="w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
-        />
-      </div>
+        <div>
+          <label className="block mb-1">Nivel Educativo</label>
+          <input
+            type="text"
+            value={
+              form.unidad_educativa && typeof form.unidad_educativa === "object"
+                ? form.unidad_educativa.nivel || ""
+                : ""
+            }
+            readOnly
+            className="w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
+          />
+        </div>
 
-      <div>
-        <label className="block mb-1">Número de Grado</label>
-        <select
-          name="numero"
-          value={form.numero}
-          onChange={handleChange}
-          className="w-full border rounded p-2"
-        >
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <option key={n} value={n}>
-              {n === 1 ? "1ro" : n === 2 ? "2do" : n === 3 ? "3ro" : `${n}to`}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div>
+          <label className="block mb-1">Número de Grado</label>
+          <select
+            name="numero"
+            value={form.numero}
+            onChange={handleChange}
+            className="w-full border rounded p-2"
+          >
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <option key={n} value={n}>
+                {n === 1 ? "1ro" : n === 2 ? "2do" : n === 3 ? "3ro" : `${n}to`}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <label className="block mb-1">Nombre completo</label>
-        <input
-          type="text"
-          value={form.nombre}
-          readOnly
-          className="w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
-        />
+        <div>
+          <label className="block mb-1">Nombre completo</label>
+          <input
+            type="text"
+            value={form.nombre}
+            readOnly
+            className="w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
+          />
+        </div>
       </div>
     </FormModal>
   );

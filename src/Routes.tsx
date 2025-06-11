@@ -30,6 +30,7 @@ import SuperAdminPuestos from "./app/dashboard/SuperAdmin/Gestion Usuarios/Puest
 import AdminLayout from "./app/dashboard/Admin/Layout";
 import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
+import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
 
 
 
@@ -69,6 +70,7 @@ export const Routes: RouteObject[] = [
       { path: "paralelos", element: <SuperAdminParalelos />},
       { path: "roles", element: <SuperAdminRoles /> },
       { path: "tipo-horario", element: <SuperAdminTipoHorario />},
+      { path: "carga-horaria", element: <SuperAdminCargaHoraria />},
       { path: "horario", element: <SuperAdminHorario />},
       { path: "materia", element: <SuperAdminMateria />},
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
