@@ -1,7 +1,7 @@
 // src/app/modelos/helpers.ts
 import { Usuario } from "./Usuarios";
-import { Estudiante, TutorEstudiante, Tutor } from "./Estudiantes";
-import { UnidadEducativa } from "./Institucion";
+import { Estudiante, TutorEstudiante } from "./Estudiantes";
+
 import { Rol } from "./Usuarios";
 import { Turno } from "./Calendario";
 
@@ -31,6 +31,7 @@ export function emptyUsuario(): Usuario {
 }
 export function emptyEstudiante(): Estudiante {
   return {
+    id: 0,
     usuario: emptyUsuario(),
     rude: "",
     estado: true,

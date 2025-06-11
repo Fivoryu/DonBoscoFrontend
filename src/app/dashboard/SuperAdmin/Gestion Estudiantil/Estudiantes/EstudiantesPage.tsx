@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Estudiante } from "@/app/modelos/Estudiantes";
 import {
-    crearEstudiante,
-    editarEstudiante,
     eliminarEstudiante,
     getEstudiantes
 } from "@/app/helpers/estudiantesHelpers";
@@ -63,7 +61,7 @@ export default function EstudiantesPage() {
         await fetchEstudiantes();
     };
 
-    const handleSave = (nuevo: Estudiante) => {
+    const handleSave = () => {
         setModalOpen(false);
         fetchEstudiantes();
     };
