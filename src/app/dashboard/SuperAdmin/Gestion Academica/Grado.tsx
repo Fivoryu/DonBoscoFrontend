@@ -94,7 +94,6 @@ export default function AcademicoGrados() {
     }
   };
 
-  console.log(unidades)
 
   return (
     <section className="p-6 space-y-4">

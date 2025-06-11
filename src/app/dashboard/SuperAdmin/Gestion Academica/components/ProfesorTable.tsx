@@ -20,6 +20,8 @@ export type Row = {
   nombreCompleto: string;
   sexo: string;
   email: string;
+  colegio: string;
+  unidad: string;
   fechaNac: string;
   username: string;
   especialidades: string; 
@@ -32,6 +34,8 @@ const cols: Array<[keyof Row, string]> = [
   ["nombreCompleto", "Nombre"],
   ["sexo", "Sexo"],
   ["email", "Email"],
+  ["colegio", "Colegio"],
+  ["unidad", "Unidad"],
   ["fechaNac", "Nacimiento"],
   ["username", "Usuario"],
   ["especialidades", "Especialidades"],
@@ -63,6 +67,8 @@ export default function ProfesorTable({
         nombreCompleto: `${p.usuario.nombre} ${p.usuario.apellido}`,
         sexo:           p.usuario.sexo,
         email:          p.usuario.email,
+        colegio:        p.unidad?.colegio?.nombre ?? "–",
+        unidad:         p.unidad?.nombre ?? "–",
         fechaNac:       p.usuario.fecha_nacimiento?.slice(0,10) ?? "–",
         username:       p.usuario.username,
         especialidades: nombres.length > 0 ? nombres.join(", ") : "–",
@@ -151,6 +157,8 @@ export default function ProfesorTable({
                     {r.email}
                   </div>  
                 </td>
+                <td className="px-4 py-3">{r.colegio}</td>
+                <td className="px-4 py-3">{r.unidad}</td>
                 <td className="px-4 py-3">{r.fechaNac}</td>
                 <td className="px-4 py-3">{r.username}</td>
                 <td className="px-4 py-3">

@@ -12,7 +12,6 @@ export interface Especialidad {
 }
 
 export interface Profesor {
-  /** la PK es el mismo usuario.id */
   usuario: Usuario;
   estado: boolean;
   unidad: UnidadEducativa
@@ -23,4 +22,15 @@ export interface ProfesorEspecialidad {
   profesor: Profesor;
   especialidad: Especialidad;
   fecha_asignacion: string; // ISO date, e.g. "2025-05-27"
+}
+
+import { Periodo } from "./Calendario";
+
+export interface CargaHoraria {
+  id: number;
+  profesor: Profesor;
+  especialidad: Especialidad;
+  profesor_especialidad?: ProfesorEspecialidad;
+  horas: number;
+  periodo: Periodo;
 }

@@ -1,5 +1,6 @@
 // src/app/dashboard/SuperAdmin/GestionPersonal/Profesor.tsx
 import { ProfesorEspecialidad, Especialidad, Profesor } from "@/app/modelos/Personal";
+import { UnidadEducativa, Colegio } from "@/app/modelos/Institucion";
 import AxiosInstance from "@/components/AxiosInstance";
 import { useState, useEffect } from "react";
 import ProfesorFormModal from "./components/ProfesorFormModal";
@@ -9,6 +10,8 @@ export default function SuperAdminProfesor() {
   const [profesores, setProfesores] = useState<Profesor[]>([]);
   const [profesorEspecialidades, setProfesorEspecialidades] = useState<ProfesorEspecialidad[]>([]);
   const [especialidades, setEspecialidades] = useState<Especialidad[]>([]);
+  const [colegios, setColegios] = useState<Colegio[]>([]);
+  const [unidades, setUnidades] = useState<UnidadEducativa[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<keyof Row>("id");
@@ -20,12 +23,16 @@ export default function SuperAdminProfesor() {
     Promise.all([
       AxiosInstance.get<Profesor[]>("/personal/profesores/listar/"),
       AxiosInstance.get<ProfesorEspecialidad[]>("/personal/asignaciones/listar/"),
-      AxiosInstance.get<Especialidad[]>("/personal/especialidades/listar/")
+      AxiosInstance.get<Especialidad[]>("/personal/especialidades/listar/"),
+      AxiosInstance.get<Colegio[]>("/institucion/colegios/listar/"),
+      AxiosInstance.get<UnidadEducativa[]>("/institucion/unidades-educativas/listar/"),
     ])
-      .then(([resP, resPE, resE]) => {
+      .then(([resP, resPE, resE, resC, resU]) => {
         setProfesores(resP.data);
         setProfesorEspecialidades(resPE.data);
         setEspecialidades(resE.data);
+        setColegios(resC.data);
+        setUnidades(resU.data);
       })
       .catch(() => setError("No se pudieron cargar los datos."))
       .finally(() => setLoading(false));
@@ -99,7 +106,7 @@ export default function SuperAdminProfesor() {
     setEditProfesor(null);
   };
 
-  console.log(profesorEspecialidades)
+  console.log(profesores)
 
   return (
     <section className="p-6 space-y-4">
@@ -132,6 +139,8 @@ export default function SuperAdminProfesor() {
         <ProfesorFormModal
           initial={editProfesor}   // ProfesorEspecialidad|null
           especialidades={especialidades}
+          colegios={colegios}
+          unidades={unidades}
           onSave={handleSave}      // recibe ProfesorEspecialidad
           onCancel={() => {
             setModalOpen(false);

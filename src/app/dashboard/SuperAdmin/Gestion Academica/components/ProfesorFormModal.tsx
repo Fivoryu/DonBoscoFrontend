@@ -3,9 +3,12 @@ import React, { useState, useEffect } from "react";
 import FormModal from "@/components/FormModal";
 import AxiosInstance from "@/components/AxiosInstance";
 import { Especialidad, ProfesorEspecialidad } from "@/app/modelos/Personal";
+import { UnidadEducativa, Colegio } from "@/app/modelos/Institucion";
 
 interface Props {
   initial: ProfesorEspecialidad | null;
+  colegios: Colegio[];
+  unidades: UnidadEducativa[];
   especialidades: Especialidad[];
   onCancel: () => void;
   onSave: (pe: ProfesorEspecialidad) => void;
@@ -13,6 +16,8 @@ interface Props {
 
 export default function ProfesorFormModal({
   initial,
+  colegios,
+  unidades,
   especialidades,
   onCancel,
   onSave,
@@ -30,7 +35,7 @@ export default function ProfesorFormModal({
     fecha_nacimiento:  initial?.profesor.usuario.fecha_nacimiento?.slice(0,10) ?? "",
     username:          initial?.profesor.usuario.username ?? "",
     password:          "",
-    
+    unidad:         initial?.profesor.unidad ?? undefined,
     // campos de asignación
     especialidad_id:   initial?.especialidad.id        ?? 0,
     fecha_asignacion:  initial?.fecha_asignacion.slice(0,10) ?? "",
@@ -50,7 +55,7 @@ export default function ProfesorFormModal({
         fecha_nacimiento:  initial.profesor.usuario.fecha_nacimiento?.slice(0,10) ?? "",
         username:          initial.profesor.usuario.username,
         password:          "",
-
+        unidad:            initial.profesor.unidad,
         especialidad_id:   initial.especialidad.id,
         fecha_asignacion:  initial.fecha_asignacion.slice(0,10),
       });
@@ -112,9 +117,10 @@ export default function ProfesorFormModal({
       email:            form.email,
       fecha_nacimiento: form.fecha_nacimiento || null,
       username:         form.username,
+      // Agrega la unidad como id si existe
+      unidad: form.unidad?.id ?? null,
     };
     if (!isEditingUser) {
-      // solo al crear metemos password y rol
       userPayload.password = form.password!;
       userPayload.rol_id   = 5; // ID “profesor”
     }
@@ -176,7 +182,25 @@ export default function ProfesorFormModal({
     }
   };
 
+  const [selectedColegio, setSelectedColegio] = useState<number | "">("");
+  const [unidadesFiltradas, setUnidadesFiltradas] = useState<UnidadEducativa[]>([]);
 
+  // Filtrar unidades por colegio seleccionado
+  useEffect(() => {
+    if (selectedColegio) {
+      setUnidadesFiltradas(unidades.filter(u => u.colegio?.id === Number(selectedColegio)));
+    } else {
+      setUnidadesFiltradas([]);
+    }
+  }, [selectedColegio, unidades]);
+
+  // Si initial existe, setea el colegio y unidades filtradas
+  useEffect(() => {
+    if (initial && initial.profesor.unidad && initial.profesor.unidad.colegio) {
+      setSelectedColegio(initial.profesor.unidad.colegio.id);
+      setUnidadesFiltradas(unidades.filter(u => u.colegio?.id === initial.profesor.unidad.colegio.id));
+    }
+  }, [initial, unidades]);
 
 
 
@@ -187,8 +211,41 @@ export default function ProfesorFormModal({
       onSubmit={handleSubmit}
       submitLabel="Guardar"
     >
-      {/* Campos de Usuario */}
       <div className="grid gap-4">
+        {/* Colegio */}
+        <div>
+          <label className="block mb-1">Colegio</label>
+          <select
+            value={selectedColegio}
+            onChange={e => setSelectedColegio(Number(e.target.value) || "")}
+            className="w-full border rounded p-2"
+          >
+            <option value="">Seleccione colegio</option>
+            {colegios.map(c => (
+              <option key={c.id} value={c.id}>{c.nombre}</option>
+            ))}
+          </select>
+        </div>
+        {/* Unidad Educativa */}
+        <div>
+          <label className="block mb-1">Unidad Educativa</label>
+          <select
+            name="unidad"
+            value={form.unidad?.id ?? ""}
+            onChange={e => {
+              const unidad = unidades.find(u => u.id === Number(e.target.value));
+              setForm(f => ({ ...f, unidad: unidad }));
+            }}
+            className="w-full border rounded p-2"
+            disabled={!selectedColegio}
+          >
+            <option value="">Seleccione unidad</option>
+            {unidadesFiltradas.map(u => (
+              <option key={u.id} value={u.id}>{u.nombre}</option>
+            ))}
+          </select>
+        </div>
+        {/* Campos de Usuario */}
         <div>
           <label className="block mb-1">Foto URL</label>
           <input
