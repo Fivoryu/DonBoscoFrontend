@@ -112,76 +112,82 @@ export default function EstudianteFormModal({
       unidad_id: form.unidad_id
     };
 
-    
-      let usuarioId: number;
 
-      if (isNew) {
-        usuarioPayload.password = form.password;
-        usuarioPayload.rol_id = 4;
-        usuarioPayload.rude = form.rude;
+    let usuarioId: number;
 
-        console.log("📤 Enviando payload de usuario para registro:", usuarioPayload);
-        const res = await AxiosInstance.post("/user/auth/usuarios/register/", usuarioPayload);
-        usuarioId = res.data.user?.id || res.data.id;
-        console.log("✅ Usuario creado con ID:", usuarioId);
-      } else {
-        usuarioId = form.usuario_id;
-        console.log("📤 Enviando payload de usuario para edición:", usuarioPayload);
-        await AxiosInstance.put(`/user/auth/usuarios/${usuarioId}/editar/`, usuarioPayload);
-        console.log("✅ Usuario actualizado.");
-      }
+    if (isNew) {
+      usuarioPayload.password = form.password;
+      usuarioPayload.rol_id = 4;
+      usuarioPayload.rude = form.rude;
 
-      const payloadEstudiante = {
-        usuario_id: usuarioId,
-        rude: form.rude,
-        estado: true,
-        curso_id: form.curso_id,
-        unidad_id: form.unidad_id
-      };
+      console.log("📤 Enviando payload de usuario para registro:", usuarioPayload);
+      const res = await AxiosInstance.post("/user/auth/usuarios/register/", usuarioPayload);
+      usuarioId = res.data.user?.id || res.data.id;
+      console.log("✅ Usuario creado con ID:", usuarioId);
+    } else {
+      usuarioId = form.usuario_id;
+      // console.log("📤 Enviando payload de usuario para edición:", usuarioPayload);
+      await AxiosInstance.put(`/user/auth/usuarios/${usuarioId}/editar/`, usuarioPayload);
+      // console.log("✅ Usuario actualizado.");
+    }
 
-      console.log("📦 Payload estudiante:", payloadEstudiante);
+    setTimeout(() => {
+      window.location.reload();
+    }, 8000);
 
-      if (isNew) {
-        await crearEstudiante(payloadEstudiante);
-        console.log("✅ Estudiante creado.");
-      } else {
-        await editarEstudiante(form.id, payloadEstudiante);
-        console.log("✅ Estudiante editado.");
-      }
+    const payloadEstudiante = {
+      usuario_id: usuarioId,
+      rude: form.rude,
+      estado: true,
+      curso_id: form.curso_id,
+      unidad_id: form.unidad_id
+    };
 
-      // 🔧 Construir el objeto Estudiante manualmente para evitar error de tipo
-      const usuarioObj = new Usuario({
-        id: usuarioId,
-        ci: form.ci,
-        foto: null,
-        nombre: form.nombre,
-        apellido: form.apellido,
-        sexo: form.sexo,
-        email: form.email,
-        fecha_nacimiento: null,
-        username: form.username,
-        estado: true,
-        rol: { id: 4, nombre: "Estudiante" }, // puedes ajustar esto según tu sistema
-        telefono: null,
-        password: "",
-        is_staff: false,
-        is_active: true,
-        date_joined: new Date().toISOString(),
-        puesto: undefined
-      });
+    console.log("📦 Payload estudiante:", payloadEstudiante);
 
-      const estudianteObj: Estudiante = {
-        id: isNew ? Date.now() : form.id,
-        usuario: usuarioObj,
-        rude: form.rude,
-        estado: true,
-        curso: cursos.find(c => c.id === form.curso_id) || undefined,
-        unidad: unidades.find(u => u.id === form.unidad_id)!
-      };
+    if (isNew) {
+      await crearEstudiante(payloadEstudiante);
+      console.log("✅ Estudiante creado.");
+    } else {
+      await editarEstudiante(form.id, payloadEstudiante);
+      console.log("✅ Estudiante editado.");
+    }
 
-      console.log("📥 Estudiante listo para guardar en frontend:", estudianteObj);
-      onSave(estudianteObj);
-    
+    // 🔧 Construir el objeto Estudiante manualmente para evitar error de tipo
+    const usuarioObj = new Usuario({
+      id: usuarioId,
+      ci: form.ci,
+      foto: null,
+      nombre: form.nombre,
+      apellido: form.apellido,
+      sexo: form.sexo,
+      email: form.email,
+      fecha_nacimiento: null,
+      username: form.username,
+      estado: true,
+      rol: { id: 4, nombre: "Estudiante" }, // puedes ajustar esto según tu sistema
+      telefono: null,
+      password: "",
+      is_staff: false,
+      is_active: true,
+      date_joined: new Date().toISOString(),
+      puesto: undefined
+    });
+
+    const estudianteObj: Estudiante = {
+      id: isNew ? Date.now() : form.id,
+      usuario: usuarioObj,
+      rude: form.rude,
+      estado: true,
+      curso: cursos.find(c => c.id === form.curso_id) || undefined,
+      unidad: unidades.find(u => u.id === form.unidad_id)!
+    };
+
+    console.log("📥 Estudiante listo para guardar en frontend:", estudianteObj);
+    onSave(estudianteObj);
+
+
+
   };
 
 
