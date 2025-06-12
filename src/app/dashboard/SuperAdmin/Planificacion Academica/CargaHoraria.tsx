@@ -122,6 +122,7 @@ export default function SuperAdminCargaHoraria() {
     }
   }
 
+
   return (
     <section className="p-6 space-y-4">
       <header className="flex justify-between items-center">

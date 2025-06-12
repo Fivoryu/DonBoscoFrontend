@@ -98,11 +98,17 @@ export default function CargaFormModal({
   }, [form.profesor]);
 
   // Filtrados dependientes
-  const unidadesFiltradas = unidades.filter(u => u.colegio.id === Number(form.colegio));
-  const calendariosFiltrados = calendarios.filter(c => c.unidad_educativa.id === Number(form.unidad));
-  const periodosFiltrados = periodos.filter(p => p.calendario.id === Number(form.calendario));
-  const profesoresFiltrados = profesores.filter(p => p.unidad.id === Number(form.unidad));
-  const especialidadesProfesor = form.profesor ? (profesorEspecialidades[Number(form.profesor)] ?? []) : [];
+  const unidadesFiltradas = unidades.filter(u =>
+    u.colegio?.id === Number(form.colegio)
+  );
+
+  const profesoresFiltrados = profesores.filter(p =>
+    p.unidad?.id === Number(form.unidad)
+  );
+
+  const especialidadesProfesor = form.profesor
+    ? profesorEspecialidades[Number(form.profesor)] ?? []
+    : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -121,6 +127,25 @@ export default function CargaFormModal({
       horas: Number(form.horas),
     });
   };
+
+  const filterCalendariosByUnidad = (unidadId: string) =>
+    unidadId
+      ? calendarios.filter(c =>
+          c.unidad_educativa.id === Number(unidadId)
+        )
+      : [];
+
+  // 2) Filtrar periodos por calendario (igual que antes)
+  const filterPeriodosByCalendario = (calendarioId: string) =>
+    calendarioId
+      ? periodos.filter(p => {
+          if (!p.calendario) return false;
+          const cal = typeof p.calendario === "object" ? p.calendario.id : p.calendario;
+          return cal === Number(calendarioId);
+        })
+      : [];
+
+  console.log(calendarios)
 
   return (
     <FormModal
@@ -168,15 +193,16 @@ export default function CargaFormModal({
             name="calendario"
             value={form.calendario}
             onChange={handleChange}
-            className="w-full border rounded p-2"
             disabled={!form.unidad}
+            className="w-full border rounded p-2"
           >
             <option value="">Seleccione un calendario</option>
-            {calendariosFiltrados.map(c => (
+            {filterCalendariosByUnidad(form.unidad).map(c => (
               <option key={c.id} value={c.id}>{c.año}</option>
             ))}
           </select>
         </div>
+
         {/* Periodo */}
         <div>
           <label className="block mb-1">Periodo</label>
@@ -184,11 +210,11 @@ export default function CargaFormModal({
             name="periodo"
             value={form.periodo}
             onChange={handleChange}
-            className="w-full border rounded p-2"
             disabled={!form.calendario}
+            className="w-full border rounded p-2"
           >
             <option value="">Seleccione un periodo</option>
-            {periodosFiltrados.map(p => (
+            {filterPeriodosByCalendario(form.calendario).map(p => (
               <option key={p.id} value={p.id}>{p.nombre}</option>
             ))}
           </select>

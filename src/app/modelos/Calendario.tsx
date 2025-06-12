@@ -2,7 +2,7 @@ import { UnidadEducativa } from "./Institucion";
 
 export interface Periodo {
   id: number;
-  calendario: CalendarioAcademico;
+  calendario?: CalendarioAcademico;
   tipo_division: string;
   tipo_division_display: string;
   nombre: string;
