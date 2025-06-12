@@ -4,6 +4,7 @@ import { UnidadEducativa } from "./Institucion";
 import { Curso } from "./Academico";
 
 export interface Estudiante {
+  id: number;
   usuario: Usuario;
   rude: string;
   estado: boolean;
@@ -12,6 +13,7 @@ export interface Estudiante {
 }
 
 export interface Tutor {
+  id?: number; // igual que arriba
   usuario: Usuario;
   parentesco: "PAD"|"MAD"|"TUT"|"HER"|"OTR";
   parentesco_display: string;

@@ -58,9 +58,23 @@ export interface Materia {
  */
 export interface MateriaCurso {
   id: number;
+  nombre_completo: string;
   curso_id: number;
   curso: Curso;
   materia: Materia;
   materia_id: number;
   profesor: Profesor;
+}
+
+import { Aula } from "./Institucion";
+export interface Clase {
+  id: number;
+
+  // Nest-read-only (GET) ────────────────────────────────────────
+  materia_curso: MateriaCurso; // Solo presente en respuestas GET
+  aula: Aula;                  // idem
+
+  // Write-only (POST | PUT) ─────────────────────────────────────
+  materia_curso_id?: number;   // Para envíos al backend
+  aula_id?: number;
 }
