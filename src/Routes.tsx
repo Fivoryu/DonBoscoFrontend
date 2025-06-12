@@ -32,7 +32,14 @@ import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
 import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
 import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
+import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
+import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
+<<<<<<< HEAD
+import SuperAdminClase from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
+=======
+import SuperAdminCalendarioAcademico from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
+>>>>>>> cb56bb1b54556ad8251283ab6645019944065234
 
 
 
