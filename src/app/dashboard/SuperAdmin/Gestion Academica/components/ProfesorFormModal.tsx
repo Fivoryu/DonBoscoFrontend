@@ -122,7 +122,7 @@ export default function ProfesorFormModal({
     };
     if (!isEditingUser) {
       userPayload.password = form.password!;
-      userPayload.rol_id   = 5; // ID “profesor”
+      userPayload.rol_id   = 5;
     }
 
     // 5) Payload para asignación de especialidad (si corresponde)
