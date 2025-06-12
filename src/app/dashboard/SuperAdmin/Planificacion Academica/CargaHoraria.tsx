@@ -103,7 +103,7 @@ export default function SuperAdminCargaHoraria() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar esta carga horaria?")) return;
     try {
-      await AxiosInstance.delete(`/personal/cargas-horarias/${id}/eliminar/`);
+      await AxiosInstance.delete(`/personal/carga_horaria/${id}/eliminar/`);
       setCargas(prev => prev.filter(c => c.id !== id));
     } catch (err) {
       alert("Error al eliminar la carga horaria.");
