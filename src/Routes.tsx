@@ -30,8 +30,14 @@ import SuperAdminPuestos from "./app/dashboard/SuperAdmin/Gestion Usuarios/Puest
 import AdminLayout from "./app/dashboard/Admin/Layout";
 import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
+import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
+import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
+<<<<<<< HEAD
 import SuperAdminClase from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
+=======
+import SuperAdminCalendarioAcademico from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
+>>>>>>> cb56bb1b54556ad8251283ab6645019944065234
 
 
 
@@ -77,7 +83,14 @@ export const Routes: RouteObject[] = [
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
+<<<<<<< HEAD
       { path:"clases", element: <SuperAdminClase/>}
+=======
+      { path: "alumnos", element: <SuperAdminEstudiantes /> },
+      {path: "tutores", element: <SuperAdminTutor />},
+      { path: "calendario-academico", element: <SuperAdminCalendarioAcademico />},
+      
+>>>>>>> cb56bb1b54556ad8251283ab6645019944065234
     ],
   }, {
     path: "/dashboard/admin/",
