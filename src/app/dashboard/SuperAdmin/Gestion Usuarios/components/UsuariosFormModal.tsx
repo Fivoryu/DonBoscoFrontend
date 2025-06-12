@@ -139,7 +139,7 @@ export default function UsuarioFormModal({ initial, onCancel, onSave }: Props) {
       let resp;
       if (form.id) {
         resp = await AxiosInstance.put(
-          `/user/auth/usuarios/editar-usuario/${form.id}/`,
+          `/user/auth/usuarios/${form.id}/editar-usuario/`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
