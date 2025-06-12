@@ -1,18 +1,19 @@
 // src/components/FeriadoManager.tsx
 import  { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import AxiosInstance from "@/components/AxiosInstance";
-
+import { Pencil, Trash } from "lucide-react";
 export interface Feriado {
   id: number;
-  tipo: { id:number; nombre:string; };
+  tipo: { id: number; nombre: string };
   nombre: string;
   descripcion: string | null;
   fecha: string;
+  calendario: number;  
 }
 
 interface FeriadoForm {
   calendario: number;
-  tipo_id: number;
+  tipo: number;        // <-- antes era tipo_id
   nombre: string;
   descripcion: string;
   fecha: string;
@@ -25,7 +26,7 @@ export function FeriadoManager({ calendarioId }: { calendarioId: number }) {
   const [editing, setEditing] = useState<Feriado|null>(null);
   const [form, setForm] = useState<FeriadoForm>({
     calendario: calendarioId,
-    tipo_id: 0,
+    tipo: 0,
     nombre: "",
     descripcion: "",
     fecha: "",
@@ -37,67 +38,90 @@ export function FeriadoManager({ calendarioId }: { calendarioId: number }) {
   }, []);
 
   function fetchTipos() {
-    AxiosInstance.get("/calendario/tipos-feriado/listar/")
-      .then(res => setTipos(res.data))
-      .catch(console.error);
-  }
+  AxiosInstance.get<{ id: number; nombre: string }[]>(
+    `/calendario/tipos-feriado/listar/?calendario=${calendarioId}`
+  )
+  .then(res => setTipos(res.data))
+  .catch(console.error);
+}
+
 
   function fetchFeriados() {
-    AxiosInstance.get<Feriado[]>(`/calendario/feriados/listar/?calendario=${calendarioId}`)
-      .then(res => setFeriados(res.data))
-      .catch(console.error);
-  }
+   AxiosInstance
+     // 2) Traemos todos y luego los filtramos en el cliente
+     .get<Feriado[]>("/calendario/feriados/listar/")
+     .then(res => {
+       // Sólo nos quedamos con los del calendario actual:
+       const sóloEste = res.data.filter(f => f.calendario === calendarioId);
+       setFeriados(sóloEste);
+     })
+     .catch(console.error);
+}
 
   function handleOpen(f?: Feriado) {
     if (f) {
       setEditing(f);
       setForm({
         calendario: calendarioId,
-        tipo_id: f.tipo.id,
-        nombre: f.nombre,
-        descripcion: f.descripcion||"",
-        fecha: f.fecha,
+        tipo:       f.tipo.id,      // <-- mapeamos a f.tipo.id
+        nombre:     f.nombre,
+        descripcion: f.descripcion || "",
+        fecha:      f.fecha,
       });
     } else {
       setEditing(null);
-      setForm({ calendario: calendarioId, tipo_id:0, nombre:"", descripcion:"", fecha:"" });
+      setForm({ calendario: calendarioId, tipo:0, nombre:"", descripcion:"", fecha:"" });
     }
     setOpen(true);
   }
 
-  function handleClose() { setOpen(false); setEditing(null); }
+  function handleClose() {
+    setOpen(false);
+    setEditing(null);
+  }
 
   function handleChange(e: ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
     const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: name==="tipo_id" ? Number(value) : value }));
+    setForm(f => ({
+      ...f,
+      [name]: name === "tipo" ? Number(value) : value
+    }));
   }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const { calendario, ...body } = form;
-    const req = editing
-      ? AxiosInstance.put(`/calendario/feriados/${editing.id}/editar/`, body)
-      : AxiosInstance.post("/calendario/feriados/crear/", { calendario, ...body });
+    const { calendario, tipo, nombre, descripcion, fecha } = form;
+    const payload = { calendario, tipo, nombre, descripcion, fecha };
 
-    req.then(() => { fetchFeriados(); handleClose(); }).catch(console.error);
+    const req = editing
+      ? AxiosInstance.put(`/calendario/feriados/${editing.id}/editar/`, payload)
+      : AxiosInstance.post("/calendario/feriados/crear/", payload);
+
+    req
+      .then(() => { fetchFeriados(); handleClose(); })
+      .catch(console.error);
   }
 
   function handleDelete(id:number) {
     if (!confirm("Eliminar feriado?")) return;
     AxiosInstance.delete(`/calendario/feriados/${id}/eliminar/`)
-      .then(fetchFeriados).catch(console.error);
+      .then(fetchFeriados)
+      .catch(console.error);
   }
 
   return (
     <div className="mt-4 border-t pt-4">
       <div className="flex justify-between items-center mb-2">
-        <h5 className="font-semibold">Feriados</h5>
-        <button onClick={() => handleOpen()} className="text-sm text-blue-600">+ Nuevo</button>
+         <h3 className="text-2xl font-bold mb-4 text-blue-600">Feriados</h3>
+        <button onClick={() => handleOpen()} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded transition-colors">+ Nuevo Feriado</button>
       </div>
       <table className="w-full text-sm mb-4">
         <thead className="bg-gray-100">
           <tr>
-            <th className="p-1">Tipo</th><th className="p-1">Nombre</th><th className="p-1">Fecha</th><th className="p-1">Acciones</th>
+            <th className="px-4 py-2 text-left">Tipo</th>
+            <th className="px-4 py-2 text-left">Nombre</th>
+            <th className="px-4 py-2 text-left">Fecha</th>
+            <th className="px-4 py-2 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -106,13 +130,30 @@ export function FeriadoManager({ calendarioId }: { calendarioId: number }) {
               <td className="p-1">{f.tipo.nombre}</td>
               <td className="p-1">{f.nombre}</td>
               <td className="p-1">{f.fecha}</td>
-              <td className="p-1 space-x-2">
-                <button onClick={() => handleOpen(f)} className="text-blue-600">Editar</button>
-                <button onClick={() => handleDelete(f.id)} className="text-red-600">Eliminar</button>
+              
+              <td className="px-4 py-2 flex items-center gap-2">
+                <button
+                  onClick={() => handleOpen(f)}
+                  className="p-1 hover:bg-blue-100 rounded"
+                  title="Editar"
+                >
+                  <Pencil className="h-5 w-5 text-blue-600" />
+                </button>
+                <button
+                  onClick={() => handleDelete(f.id)}
+                  className="p-1 hover:bg-red-100 rounded"
+                  title="Eliminar"
+                >
+                  <Trash className="h-5 w-5 text-red-600" />
+                </button>
               </td>
             </tr>
           ))}
-          {!feriados.length && (<tr><td colSpan={4} className="p-2 text-center text-gray-500">Sin feriados</td></tr>)}
+          {!feriados.length && (
+            <tr>
+              <td colSpan={4} className="p-2 text-center text-gray-500">Sin feriados</td>
+            </tr>
+          )}
         </tbody>
       </table>
 
@@ -122,8 +163,8 @@ export function FeriadoManager({ calendarioId }: { calendarioId: number }) {
             <div>
               <label>Tipo de feriado</label>
               <select
-                name="tipo_id"
-                value={form.tipo_id}
+                name="tipo"                       // <-- cambió a "tipo"
+                value={form.tipo}
                 onChange={handleChange}
                 className="border p-1"
                 required
@@ -165,8 +206,12 @@ export function FeriadoManager({ calendarioId }: { calendarioId: number }) {
               />
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={handleClose} className="px-2 py-1 bg-gray-200">Cancelar</button>
-              <button type="submit" className="px-2 py-1 bg-blue-600 text-white">{editing ? "Actualizar" : "Crear"}</button>
+              <button type="button" onClick={handleClose} className="px-2 py-1 bg-gray-200">
+                Cancelar
+              </button>
+              <button type="submit" className="px-2 py-1 bg-blue-600 text-white">
+                {editing ? "Actualizar" : "Crear"}
+              </button>
             </div>
           </form>
         </div>
