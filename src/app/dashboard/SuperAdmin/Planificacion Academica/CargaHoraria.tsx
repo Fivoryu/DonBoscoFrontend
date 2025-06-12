@@ -72,7 +72,7 @@ export default function SuperAdminCargaHoraria() {
       let profesorEspecialidadId: number | null = null;
       if (form.profesor && form.especialidad) {
         const res = await AxiosInstance.get<ProfesorEspecialidad[]>(
-          `/personal/profesor-especialidad/?profesor=${form.profesor}&especialidad=${form.especialidad}`
+          `/personal/asignaciones/?profesor=${form.profesor}&especialidad=${form.especialidad}`
         );
         if (res.data.length > 0) {
           profesorEspecialidadId = res.data[0].id;
