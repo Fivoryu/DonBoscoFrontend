@@ -126,6 +126,16 @@ export type Accion = {
   nombre: string;
 };
 
+export type PermisoRol = {
+  id: number;
+  rol: Rol;
+  rol_nombre: string;
+  modelo: ModeloPermitido;
+  modelo_nombre: string;
+  accion: Accion;
+  accion_nombre: string;
+}
+
 export type ModeloPermitido = {
   id: number;
   nombre: string;

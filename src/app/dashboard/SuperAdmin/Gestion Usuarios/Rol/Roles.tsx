@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import AxiosInstance from "@/components/AxiosInstance";
 import RolesTable from "./components/RolesTable";
 import RolFormModal from "./components/RolFormModal";
-
+import PermisosRolModal from "./components/PermisosRolModal"; // <-- nuevo import
 
 const SuperAdminRoles = () => {
   const [roles, setRoles] = useState<Rol[]>([]);
@@ -16,6 +16,9 @@ const SuperAdminRoles = () => {
 
   const [editRol, setEditRol] = useState<Rol | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [permisosRolOpen, setPermisosRolOpen] = useState(false);
+  const [rolSeleccionado, setRolSeleccionado] = useState<Rol | null>(null);
+  
 
   useEffect(() => {
     setLoading(true);
@@ -61,6 +64,13 @@ const SuperAdminRoles = () => {
     setEditRol(null);
     onSuccess(r);
   }
+
+  // Nuevo: abrir modal de permisos
+  const handlePermisos = (rol: Rol) => {
+    setRolSeleccionado(rol);
+    setPermisosRolOpen(true);
+  };
+
   return (
     <section className="p-6 space-y-4">
       <header className="flex justify-between items-center">
@@ -84,6 +94,7 @@ const SuperAdminRoles = () => {
           onToggleSort={toggleSort}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onPermisos={handlePermisos} // <-- pasa la función
         />
       )}
 
@@ -95,6 +106,13 @@ const SuperAdminRoles = () => {
             handleSave(r);
             setModalOpen(false);
           }}
+        />
+      )}
+
+      {permisosRolOpen && rolSeleccionado && (
+        <PermisosRolModal
+          rol={rolSeleccionado}
+          onClose={() => setPermisosRolOpen(false)}
         />
       )}
     </section>

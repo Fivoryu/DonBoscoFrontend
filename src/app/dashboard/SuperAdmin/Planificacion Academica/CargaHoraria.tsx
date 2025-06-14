@@ -6,6 +6,7 @@ import { CalendarioAcademico, Periodo } from "@/app/modelos/Calendario";
 import CargaFormModal from "./components/CargaFormModal";
 import CargasTable from "./components/CargasTable";
 
+
 export default function SuperAdminCargaHoraria() {
   // Datos principales
   const [cargas, setCargas] = useState<CargaHoraria[]>([]);
