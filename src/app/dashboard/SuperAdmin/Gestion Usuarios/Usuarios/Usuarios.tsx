@@ -1,7 +1,7 @@
-import AxiosInstance from "../../../../components/AxiosInstance";
+import AxiosInstance from "@/components/AxiosInstance";
 import UsuariosTable from "./components/UsuariosTable";
 import UsuarioFormModal from "./components/UsuariosFormModal";
-import { Usuario } from "../../../modelos/Usuarios";
+import { Usuario } from "@/app/modelos/Usuarios";
 import { useState, useEffect } from "react";
 
 export default function SuperAdminUsuarios() {

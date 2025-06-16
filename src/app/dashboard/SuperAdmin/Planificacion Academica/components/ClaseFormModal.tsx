@@ -6,13 +6,10 @@ import {
   Colegio,
   UnidadEducativa,
   Aula,
-  Modulo,
 } from "@/app/modelos/Institucion";
 import {
   MateriaCurso,
   Clase,
-  Curso,
-  Materia,
 } from "@/app/modelos/Academico";
 
 interface Props {

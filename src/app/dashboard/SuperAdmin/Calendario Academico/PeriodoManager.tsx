@@ -1,7 +1,7 @@
 // src/components/PeriodoManager.tsx
 import  { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import AxiosInstance from "@/components/AxiosInstance";
-
+import { Pencil, Trash } from "lucide-react";
 export interface Periodo {
   id: number;
   tipo_division: string;
@@ -9,6 +9,7 @@ export interface Periodo {
   fecha_inicio: string;
   fecha_fin: string;
   estado: string;
+  calendario: number;          // <— Agregado
 }
 
 interface PeriodoForm {
@@ -35,12 +36,15 @@ export function PeriodoManager({ calendarioId }: { calendarioId: number }) {
     fetchPeriodos();
   }, []);
 
-  function fetchPeriodos() {
-    AxiosInstance
-      .get<Periodo[]>(`/calendario/periodos/listar/?calendario=${calendarioId}`)
-      .then(res => setPeriodos(res.data))
-      .catch(console.error);
-  }
+function fetchPeriodos() {
+  AxiosInstance
+    .get<Periodo[]>("/calendario/periodos/listar/")
+    .then(res => {
+      const sóloEste = res.data.filter(p => p.calendario === calendarioId);
+      setPeriodos(sóloEste);
+    })
+    .catch(console.error);
+}
 
   function handleOpen(p?: Periodo) {
     if (p) {
@@ -93,26 +97,44 @@ export function PeriodoManager({ calendarioId }: { calendarioId: number }) {
   return (
     <div className="mt-4 border-t pt-4">
       <div className="flex justify-between items-center mb-2">
-        <h5 className="font-semibold">Periodos</h5>
-        <button onClick={() => handleOpen()} className="text-sm text-blue-600">+ Nuevo</button>
+        <h3 className="text-2xl font-bold mb-4 text-blue-600">Periodos</h3>
+        <button onClick={() => handleOpen()} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded transition-colors">+ Nuevo Periodo</button>
       </div>
-      <table className="w-full text-sm mb-4">
+      <table className="w-full text-sm mb-4 table-fixed">
         <thead className="bg-gray-100">
           <tr>
-            <th className="p-1">Tipo</th><th className="p-1">Nombre</th><th className="p-1">Inicio</th><th className="p-1">Fin</th><th className="p-1">Estado</th><th className="p-1">Acciones</th>
+            <th className="px-4 py-2 text-left">Tipo</th>
+            <th className="px-4 py-2 text-left">Nombre</th>
+            <th className="px-4 py-2 text-left">Inicio</th>
+            <th className="px-4 py-2 text-left">Fin</th>
+            <th className="px-4 py-2 text-left">Estado</th>
+            <th className="px-4 py-2 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {periodos.map(p => (
             <tr key={p.id} className="border-b">
-              <td className="p-1">{p.tipo_division}</td>
-              <td className="p-1">{p.nombre}</td>
-              <td className="p-1">{p.fecha_inicio}</td>
-              <td className="p-1">{p.fecha_fin}</td>
-              <td className="p-1">{p.estado}</td>
-              <td className="p-1 space-x-2">
-                <button onClick={() => handleOpen(p)} className="text-blue-600">Editar</button>
-                <button onClick={() => handleDelete(p.id)} className="text-red-600">Eliminar</button>
+              <td className="px-4 py-2 text-left">{p.tipo_division}</td>
+              <td className="px-4 py-2 text-left">{p.nombre}</td>
+              <td className="px-4 py-2 text-left">{p.fecha_inicio}</td>
+              <td className="px-4 py-2 text-left">{p.fecha_fin}</td>
+              <td className="px-4 py-2 text-left">{p.estado}</td>
+
+              <td className="px-4 py-2 flex items-center gap-2">
+                <button
+                  onClick={() => handleOpen(p)}
+                  className="px-4 py-2 text-left hover:bg-blue-100 rounded"
+                  title="Editar"
+                >
+                  <Pencil className="h-5 w-5 text-blue-600" />
+                </button>
+                <button
+                  onClick={() => handleDelete(p.id)}
+                  className="px-4 py-2 text-left hover:bg-red-100 rounded"
+                  title="Eliminar"
+                >
+                  <Trash className="h-5 w-5 text-red-600" />
+                </button>
               </td>
             </tr>
           ))}
@@ -166,5 +188,5 @@ export function PeriodoManager({ calendarioId }: { calendarioId: number }) {
         </div>
       )}
     </div>
-);
+  );
 }

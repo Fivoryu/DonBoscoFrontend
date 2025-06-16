@@ -9,6 +9,7 @@ interface Props {
   onToggleSort: (key: keyof Rol) => void;
   onEdit: (r: Rol) => void;
   onDelete: (id: number) => void;
+  onPermisos: (r: Rol) => void; // <-- nuevo prop
 }
 
 const columnas: Array<[keyof Rol, string]> = [
@@ -17,7 +18,7 @@ const columnas: Array<[keyof Rol, string]> = [
   ["descripcion", "Descripción"],
 ];
 
-export default function RolesTable({ roles, sortKey, asc, onToggleSort, onEdit, onDelete }: Props) {
+export default function RolesTable({ roles, sortKey, asc, onToggleSort, onEdit, onDelete, onPermisos }: Props) {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -87,8 +88,11 @@ export default function RolesTable({ roles, sortKey, asc, onToggleSort, onEdit, 
                   <button onClick={() => onEdit(r)} className="mr-2 text-blue-600 hover:underline">
                     <Pencil className="w-4 h-4" />
                   </button>
-                  <button onClick={() => onDelete(r.id)} className="text-red-600 hover:underline">
+                  <button onClick={() => onDelete(r.id)} className="mr-2 text-red-600 hover:underline">
                     <Trash2 className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => onPermisos(r)} className="text-green-600 hover:underline">
+                    Permisos
                   </button>
                 </td>
               </tr>

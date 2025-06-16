@@ -8,11 +8,11 @@ import SuperAdminLayout from "./app/dashboard/SuperAdmin/Layout";
 import SuperAdminInicio from "./app/dashboard/SuperAdmin/Inicio";
 import SuperAdminColegios from "./app/dashboard/SuperAdmin/Configuracion Institucional/Colegios";
 import SuperAdminUnidades from "./app/dashboard/SuperAdmin/Configuracion Institucional/Unidades";
-import SuperAdminUsuarios from "./app/dashboard/SuperAdmin/Gestion Usuarios/Usuarios";
+import SuperAdminUsuarios from "./app/dashboard/SuperAdmin/Gestion Usuarios/Usuarios/Usuarios";
 import SuperAdminInfraestructura from "./app/dashboard/SuperAdmin/Infraestructura";
 
 import SuperAdminGrados from "./app/dashboard/SuperAdmin/Gestion Academica/Grado";
-import SuperAdminRoles from "./app/dashboard/SuperAdmin/Gestion Usuarios/Roles";
+import SuperAdminRoles from "./app/dashboard/SuperAdmin/Gestion Usuarios/Rol/Roles";
 import RequireAuth from "./app/routes/RequireAuth";
 import SuperAdminAulas from "./app/dashboard/SuperAdmin/Gestion Academica/Aulas";
 import SuperAdminModulos from "./app/dashboard/SuperAdmin/Gestion Academica/Modulos";
@@ -31,10 +31,20 @@ import AdminLayout from "./app/dashboard/Admin/Layout";
 import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
 
+
 import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
 import SuperAdminClase       from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
 import SuperAdminCalendarioAcademico
   from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
+
+import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
+import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
+import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
+import SuperAdminClase from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
+import SuperAdminCalendarioAcademico from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
+
+
+
 
 export const Routes: RouteObject[] = [
   {
@@ -78,12 +88,19 @@ export const Routes: RouteObject[] = [
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
+<<<<<<< HEAD
 
       { path:"clases", element: <SuperAdminClase/>}
 
     
       
  
+=======
+      { path: "alumnos", element: <SuperAdminEstudiantes /> },
+      { path: "tutores", element: <SuperAdminTutor />},
+      { path: "clases", element: <SuperAdminClase /> },
+      { path: "calendario-academico", element: <SuperAdminCalendarioAcademico /> },
+>>>>>>> 86642d2919e8a5ff6123dd0771813c82b3888eeb
     ],
   }, {
     path: "/dashboard/admin/",

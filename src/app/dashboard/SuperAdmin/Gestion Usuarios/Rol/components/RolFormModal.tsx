@@ -24,7 +24,7 @@ export default function RolFormModal({ initial, onCancel, onSave }: Props) {
       let resp;
       if (form.id) {
         resp = await AxiosInstance.put(
-          `/user/auth/roles/editar-rol/${form.id}/`,
+          `/user/auth/roles/${form.id}/editar-rol/`,
           { nombre: form.nombre, descripcion: form.descripcion }
         );
       } else {

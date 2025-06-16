@@ -6,6 +6,7 @@ import { CalendarioAcademico, Periodo } from "@/app/modelos/Calendario";
 import CargaFormModal from "./components/CargaFormModal";
 import CargasTable from "./components/CargasTable";
 
+
 export default function SuperAdminCargaHoraria() {
   // Datos principales
   const [cargas, setCargas] = useState<CargaHoraria[]>([]);
@@ -72,7 +73,7 @@ export default function SuperAdminCargaHoraria() {
       let profesorEspecialidadId: number | null = null;
       if (form.profesor && form.especialidad) {
         const res = await AxiosInstance.get<ProfesorEspecialidad[]>(
-          `/personal/profesor-especialidad/?profesor=${form.profesor}&especialidad=${form.especialidad}`
+          `/personal/asignaciones/?profesor=${form.profesor}&especialidad=${form.especialidad}`
         );
         if (res.data.length > 0) {
           profesorEspecialidadId = res.data[0].id;
@@ -103,7 +104,7 @@ export default function SuperAdminCargaHoraria() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar esta carga horaria?")) return;
     try {
-      await AxiosInstance.delete(`/personal/cargas-horarias/${id}/eliminar/`);
+      await AxiosInstance.delete(`/personal/carga_horaria/${id}/eliminar/`);
       setCargas(prev => prev.filter(c => c.id !== id));
     } catch (err) {
       alert("Error al eliminar la carga horaria.");
@@ -121,6 +122,7 @@ export default function SuperAdminCargaHoraria() {
       setAsc(true);
     }
   }
+
 
   return (
     <section className="p-6 space-y-4">
