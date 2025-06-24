@@ -140,7 +140,7 @@ export const SIDEBAR_SECTIONS_ADMIN: SidebarSection[] = [
       { to: "/dashboard/admin/especialidad", label: "Especialidad", icon: FileType, roles: ["superadmin", "admin"] },
       { to: "/dashboard/admin/profesor", label: "Profesor", icon: FaChalkboardTeacher, roles: ["superadmin", "admin"] },
       { to: "/dashboard/admin/grados", label: "Grados", icon: School, roles: ["superadmin", "admin", "profesor"] },
-      { to: "/dashboard/admin/alumnos", label: "Alumnos", icon: PiStudentLight, roles:["superadmin"]},
+      { to: "/dashboard/admin/alumnos", label: "Alumnos", icon: PiStudentLight, roles: ["superadmin"] },
       { to: "/dashboard/admin/tutores", label: "Tutores", icon: RiParentLine, roles: ["superadmin", "admin"] },
     ],
   },
@@ -161,8 +161,9 @@ export const SIDEBAR_SECTIONS_ADMIN: SidebarSection[] = [
     titleIcon: BookOpen,
     roles: ["superadmin", "admin", "profesor", "tutor"],
     items: [
-      { to: "/dashboard/admin/dimension-evaluacion", label: "Dimension Evaluacion", icon: PiExam, roles: ["superadmin", "admin"]},
-      { to: "/dashboard/admin/nota-actividad", label: "Nota Actividad", icon: LucideNotebookPen, roles: ["superadmin", "admin", "profesor"]
+      { to: "/dashboard/admin/dimension-evaluacion", label: "Dimension Evaluacion", icon: PiExam, roles: ["superadmin", "admin"] },
+      {
+        to: "/dashboard/admin/nota-actividad", label: "Nota Actividad", icon: LucideNotebookPen, roles: ["superadmin", "admin", "profesor"]
       },
       { to: "/dashboard/admin/nota-final", label: "Nota Final", icon: BookOpen, roles: ["superadmin", "admin", "profesor"] },
     ]
@@ -181,11 +182,11 @@ export const SIDEBAR_SECTIONS_ADMIN: SidebarSection[] = [
     titleIcon: MdAnalytics,
     roles: ["superadmin", "admin", "profesor"],
     items: [
-      { 
-        to: "/dashboard/admin/analisis/rendimiento-academico", 
-        label: "Analizar Rendimiento Académico", 
-        icon: TbReportAnalytics, 
-        roles: ["superadmin", "admin", "profesor"] 
+      {
+        to: "/dashboard/admin/analisis/rendimiento-academico",
+        label: "Analizar Rendimiento Académico",
+        icon: TbReportAnalytics,
+        roles: ["superadmin", "admin", "profesor"]
       },
     ]
   },
@@ -230,6 +231,27 @@ export const SIDEBAR_SECTIONS_PROFESOR: SidebarSection[] = [
     items: [
       { to: "/dashboard/profesor/horario", label: "Horario", icon: ClockIcon, roles: ["profesor"] },
       { to: "/dashboard/profesor/tipo-horario", label: "Tipo de Horario", icon: CalendarDays, roles: ["profesor"] },
+    ],
+  },
+];
+
+
+
+export const SIDEBAR_SECTIONS_TUTOR = [
+  {
+    title: "Panel",
+    items: [
+      { label: "Inicio", path: "/dashboard/tutor" },
+      { label: "Generar Licencia", path: "/dashboard/tutor/licencia" },
+    ],
+  },
+  {
+    title: "Estudiantes",
+    items: [
+      {
+        label: "Mis Estudiantes",
+        path: "/dashboard/tutor/mis-estudiantes", // ← esto hará match correctamente
+      },
     ],
   },
 ];
