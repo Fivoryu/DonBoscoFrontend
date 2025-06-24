@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import AxiosInstance from "@/components/AxiosInstance";
-import { Usuario, PermisoPuesto, Admin } from "../modelos/Usuarios";
+import { Usuario, PermisoPuesto, Admin, PermisoRol } from "../modelos/Usuarios";
 
 interface AuthContextType {
   user: Usuario | null;
@@ -20,7 +20,10 @@ interface AuthContextType {
   isEstudiante: () => boolean;
   isTutor: () => boolean;
   permisosPuesto: PermisoPuesto[];
+  permisosRol?: PermisoRol[]; // Opcional, si se necesita en el futuro
   cargarPermisosPuesto: (puestoId: number) => Promise<void>;
+  cargarPermisosRol?: (rolId: number) => Promise<void>; // Opcional, si se necesita en el futuro
+  can: (modelo: string, accion: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -35,7 +38,10 @@ const AuthContext = createContext<AuthContextType>({
   isEstudiante: () => false,
   isTutor: () => false,
   permisosPuesto: [],
+  permisosRol: [],
   cargarPermisosPuesto: async () => {},
+  cargarPermisosRol: async () => {},
+  can: () => false,
 });
 
 interface AuthProviderProps {
@@ -46,6 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState(true);
   const [permisosPuesto, setPermisosPuesto] = useState<PermisoPuesto[]>([]);
+  const [permisosRol, setPermisosRol] = useState<PermisoRol[]>([]);
   const [admin, setAdmin] = useState<Admin | null>(null);
 
   // Al montar, recuperamos token y datos de usuario (si existe)
@@ -99,8 +106,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Función genérica para comprobar roles (case‐insensitive)
   const hasRole = (allowedRoles: string[]): boolean => {
     if (!user) return false;
-    const rolUser = user.rol.nombre.toLowerCase();
-    return allowedRoles.map((r) => r.toLowerCase()).includes(rolUser);
+    const rolesNormalizados = allowedRoles.map(r => r.toLowerCase());
+    if (user.rol.nombre.toLowerCase() === "superadmin") return true;   // 👈 wildcard
+    return rolesNormalizados.includes(user.rol.nombre.toLowerCase());
   };
 
   // Helpers específicos de rol
@@ -131,6 +139,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const cargarPermisosRol = async (rolId: number) => {
+    try {
+      const res = await AxiosInstance.get<PermisoRol[]>(`/user/auth/permisos-rol?=${rolId}`);
+      setPermisosRol(res.data);
+    } catch {
+      setPermisosRol([]);
+    }
+  }
+
   // Cargar permisos del puesto solo si el usuario es admin y tiene puesto
   useEffect(() => {
     if (user?.rol.nombre.toLowerCase() === "admin" && admin?.puesto?.id) {
@@ -139,6 +156,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setPermisosPuesto([]);
     }
   }, [user?.rol?.nombre, admin?.puesto?.id]);
+
+  useEffect(() => {
+    if (user?.rol?.id) {
+      cargarPermisosRol(user.rol.id);
+    } else {
+      setPermisosRol([]);
+    }
+  }, [user?.rol?.id]);
+  const can = (modelo: string, accion: string) => {
+    // 1) SuperAdmin → todo
+    if (isSuperAdmin()) return true;
+
+    // 2) Admin → revisa PermisoPuesto
+    if (isAdmin()) {
+      return permisosPuesto.some(
+        p => p.modelo.nombre === modelo && p.accion.nombre === accion
+      );
+    }
+
+    // 3) Resto de roles → revisa PermisoRol
+    return permisosRol.some(
+      p => p.modelo_nombre === modelo && p.accion_nombre === accion
+    );
+  };
+
+
 
   return (
     <AuthContext.Provider
@@ -154,7 +197,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isEstudiante,
         isTutor,
         permisosPuesto,
+        permisosRol,
         cargarPermisosPuesto,
+        cargarPermisosRol,
+        can,
       }}
     >
       {children}

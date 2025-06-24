@@ -22,6 +22,7 @@ interface SuperAdminSBProps {
 }
 
 export default function SuperAdminSB({ openSide, onToggle, sections }: SuperAdminSBProps) {
+  // Todos los hooks deben ir aquí arriba, antes de cualquier return
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const { logout, loading, user } = useAuth();
   const navigate = useNavigate();
@@ -32,10 +33,12 @@ export default function SuperAdminSB({ openSide, onToggle, sections }: SuperAdmi
     const rol = user.rol.nombre.toLowerCase();
     if (rol === "admin") homePath = "/dashboard/admin";
     else if (rol === "profesor") homePath = "/dashboard/profesor";
+    else if (rol === "tutor") homePath = "/dashboard/tutor";
+    else if (rol === "estudiante") homePath = "/dashboard/estudiante";
+    else if (rol === "superadmin") homePath = "/dashboard/superadmin";
+    else homePath = "/dashboard"; // Ruta por defecto si no se reconoce el rol
     // Agrega más roles si es necesario
   }
-
-  if (loading) return null;
 
   // Filtrar secciones/ítems según roles
   const paquetesFiltrados: SidebarSection[] =
@@ -53,6 +56,8 @@ export default function SuperAdminSB({ openSide, onToggle, sections }: SuperAdmi
       console.error("Error al cerrar sesión:", err);
     }
   };
+
+  if (loading) return null;
 
   return (
     <>

@@ -6,7 +6,6 @@ import { User, Lock, Eye, EyeOff, HomeIcon } from "lucide-react";
 import AxiosInstance from "../../components/AxiosInstance";
 import { useAuth } from "../contexts/AuthContext";
 import SuperAdminSB from "../dashboard/Sidebar/SuperAdminSB";
-import { useState as useSidebarState } from "react";
 import clsx from "clsx";
 
 export default function Login() {
@@ -20,7 +19,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   // Estado para el sidebar (solo para pruebas)
-  const [sidebarOpen, setSidebarOpen] = useSidebarState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -47,6 +46,7 @@ export default function Login() {
 
         // redireccionar según rol
         const role = user.rol.nombre.toLowerCase();
+        console.log(role)
         const pathMap: Record<string, string> = {
           estudiante: "/dashboard/alumno",
           tutor: "/dashboard/tutor",
@@ -207,3 +207,4 @@ export default function Login() {
     </div>
   );
 }
+

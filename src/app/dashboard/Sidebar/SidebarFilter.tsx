@@ -2,7 +2,7 @@ import { SidebarSection } from "./Sidebar";
 import { useAuth } from "@/app/contexts/AuthContext";
 
 export function useSidebarFiltrado(sections: SidebarSection[]) {
-  const { hasRole, user, permisosPuesto } = useAuth();
+  const { hasRole, user, permisosPuesto, permisosRol, isAdmin, isSuperAdmin } = useAuth();
 
   // Helper: si roles vacío, mostrar siempre
   const puedeVer = (roles: string[]) => {
@@ -12,11 +12,23 @@ export function useSidebarFiltrado(sections: SidebarSection[]) {
 
   // Helper: verifica si el permiso existe para el modelo y acción
   const tienePermiso = (modelo: string, accion: string) => {
-    if (!permisosPuesto || permisosPuesto.length === 0) return true; // Si no hay permisos, mostrar todo (o nada)
-    return permisosPuesto.some(
+    // SuperAdmin puede ver todo
+    if (isSuperAdmin && isSuperAdmin()) return true;
+    // Admin: permisos por puesto
+    if (isAdmin && isAdmin()) {
+      if (!permisosPuesto || permisosPuesto.length === 0) return true;
+      return permisosPuesto.some(
+        (p) =>
+          p.modelo.nombre.toLowerCase() === modelo.toLowerCase() &&
+          p.accion.nombre.toLowerCase() === accion.toLowerCase()
+      );
+    }
+    // Otros roles: permisos por rol
+    if (!permisosRol || permisosRol.length === 0) return true;
+    return permisosRol.some(
       (p) =>
-        p.modelo.nombre.toLowerCase() === modelo.toLowerCase() &&
-        p.accion.nombre.toLowerCase() === accion.toLowerCase()
+        p.modelo_nombre.toLowerCase() === modelo.toLowerCase() &&
+        p.accion_nombre.toLowerCase() === accion.toLowerCase()
     );
   };
 
@@ -28,7 +40,7 @@ export function useSidebarFiltrado(sections: SidebarSection[]) {
         // Oculta "Iniciar sesión" si ya hay usuario, y "Cerrar sesión" si no hay usuario
         if (it.to === "/login/" && user) return false;
         if (it.to === "__logout__" && !user) return false;
-        
+
         if ((it as any).modelo && (it as any).accion) {
           return puedeVer(it.roles) && tienePermiso((it as any).modelo, (it as any).accion);
         }

@@ -10,7 +10,7 @@ export default function RequireAuth({
   children,
   allowedRoles,
 }: RequireAuthProps): JSX.Element {
-  const { user, loading, hasRole } = useAuth();
+  const { user, loading, hasRole, isSuperAdmin } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -20,6 +20,8 @@ export default function RequireAuth({
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+
+  if (isSuperAdmin()) return children;
 
   if (allowedRoles && allowedRoles.length > 0 && !hasRole(allowedRoles)) {
     return <Navigate to="/dashboard/no-permission" replace />;

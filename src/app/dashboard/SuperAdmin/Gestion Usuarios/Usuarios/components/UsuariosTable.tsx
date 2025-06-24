@@ -43,8 +43,10 @@ export default function UsuariosTable({
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return usuarios;
-    return usuarios.filter(u =>
+    // Filtrar usuarios vacíos o incompletos
+    const validUsers = usuarios.filter(u => u && u.ci && u.nombre && u.apellido);
+    if (!term) return validUsers;
+    return validUsers.filter(u =>
       u.ci.toLowerCase().includes(term) ||
       u.nombre.toLowerCase().includes(term) ||
       u.apellido.toLowerCase().includes(term)
@@ -133,7 +135,7 @@ export default function UsuariosTable({
                   {u.sexo?.toUpperCase() === "M" ? <Mars className="w-5 h-5 text-blue-600" /> : u.sexo?.toUpperCase() === "F" ? <Venus className="w-5 h-5 text-pink-600" /> : <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">N/A</div>}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">{u.email}</td>
-                <td className="px-4 py-3 whitespace-nowrap">{u.rol.nombre}</td>
+                <td className="px-4 py-3 whitespace-nowrap">{u.rol?.nombre ?? "Sin rol"}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{u.username}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{u.fecha_nacimiento?.slice(0, 10)}</td>
                 <td className="px-4 py-3 whitespace-nowrap">

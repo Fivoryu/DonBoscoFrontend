@@ -47,10 +47,12 @@ const PermisosRolModal = ({ rol, onClose }: Props) => {
         background: "rgba(255,255,255,0.7)",
         backdropFilter: "blur(2px)",
       }}
+      onClick={onClose} // Cierra al hacer click en el overlay
     >
       <div
         className="bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh] w-full max-w-4xl mx-2 md:mx-auto"
         style={{ minWidth: 320 }}
+        onClick={e => e.stopPropagation()} // Evita que el click dentro cierre el modal
       >
         <div className="flex justify-between items-center px-4 py-3 border-b">
           <h2 className="text-lg font-bold">Permisos de: {rol.nombre}</h2>

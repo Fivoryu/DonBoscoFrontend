@@ -218,9 +218,7 @@ export const SIDEBAR_SECTIONS_PROFESOR: SidebarSection[] = [
     roles: ["profesor"], // sólo “profesor” ve esta sección
     items: [
       { to: "/dashboard/profesor/clases", label: "Mis Clases", icon: FileType, roles: ["profesor"] },
-      { to: "/dashboard/profesor/alumnos", label: "Mis Alumnos", icon: PiStudentLight, roles: ["profesor"] },
-      { to: "/dashboard/profesor/notas", label: "Notas", icon: BookOpen, roles: ["profesor"] },
-      { to: "/dashboard/profesor/asistencias", label: "Asistencias", icon: Grid, roles: ["profesor"] },
+      { to: "/dashboard/profesor/curso", label: "Mi Curso", icon: PiStudentLight, roles: ["profesor"] },
     ],
   },
   {
@@ -229,7 +227,68 @@ export const SIDEBAR_SECTIONS_PROFESOR: SidebarSection[] = [
     roles: ["profesor"],
     items: [
       { to: "/dashboard/profesor/horario", label: "Horario", icon: ClockIcon, roles: ["profesor"] },
-      { to: "/dashboard/profesor/tipo-horario", label: "Tipo de Horario", icon: CalendarDays, roles: ["profesor"] },
     ],
   },
+  {
+    title: "Gestion Estudiantil",
+    titleIcon: PiStudentLight,
+    roles: ["profesor"],
+    items: [
+      { to: "/dashboard/profesor/asistencia", label: "Asistencia", icon: Grid, roles: ["profesor"] },
+    ]
+  },
+  {
+    title: "Evaluación",
+    titleIcon: BookOpen,
+    roles: ["profesor"],
+    items: [
+      { to: "/dashboard/profesor/nota-actividad", label: "Registrar Calificaciones", icon: LucideNotebookPen, roles: ["profesor"] },
+      { to: "/dashboard/profesor/nota-final", label: "Generar Boletines", icon: BookOpen, roles: ["profesor"] },
+      { to: "/dashboard/profesor/calendario", label: "Ver Calendario", icon: CalendarDays, roles: ["profesor"] },
+    ]
+  },
 ];
+
+
+export const SIDEBAR_SECTIONS_TUTOR: SidebarSection[] = [
+  {
+    title: "Seguridad",
+    titleIcon: MdSecurity,
+    roles: [],
+    items: [
+      {
+        to: "/login/",
+        label: "Iniciar sesión",
+        icon: LogIn,
+        roles: [],
+      },
+      // --- Cerrar sesión ---
+      {
+        to: "__logout__",
+        label: "Cerrar sesión",
+        icon: LogOut,
+        roles: [], // visible para cualquier usuario autenticado
+      },
+    ]
+  },
+  {
+    title: "Estudiantes",
+    titleIcon: PiStudentLight,
+    roles: ["tutor"],
+    items: [
+      { to: "/dashboard/tutor/estudiantes", label: "Mis Estudiantes", icon: PiStudentLight, roles: ["tutor"] },
+      { to: "/dashboard/tutor/asistencia", label: "Asistencia", icon: Grid, roles: ["tutor"] },
+      { to: "/dashboard/tutor/licencia", label: "Licencias Estudiantiles", icon: TbLicense, roles: ["tutor"] },
+    ]
+  },
+  {
+    title: "Evaluación",
+    titleIcon: BookOpen,
+    roles: ["tutor"],
+    items: [
+      { to: "/dashboard/tutor/calendario", label: "Calendario", icon: CalendarDays, roles: ["tutor"] },
+      { to: "/dashboard/tutor/nota-actividad", label: "Calificaciones", icon: LucideNotebookPen, roles: ["tutor"] },
+      { to: "/dashboard/tutor/nota-final", label: "Boletines", icon: BookOpen, roles: ["tutor"] },
+    ]
+  }
+]

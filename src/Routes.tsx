@@ -36,6 +36,16 @@ import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Aca
 import SuperAdminClase from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
 import SuperAdminCalendarioAcademico from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
 
+import CrearActividad from "./app/dashboard/Admin/Evaluacion/DimensionEvaluacion";
+import NotaActividadPage from "./app/dashboard/Admin/Evaluacion/NotaActividadPage";
+import NotaFinalPage from "./app/dashboard/Admin/Evaluacion/NotaFinalPage";
+
+import ProfesorInicio from "./app/dashboard/Profesor/Inicio";
+import ProfesorLayout from "./app/dashboard/Profesor/Layout";
+import TutorLayout from "./app/dashboard/Tutor/Layout";
+import TutorInicio from "./app/dashboard/Tutor/Inicio";
+import TutorLicenciasPage from "./app/dashboard/Tutor/Estudiantes/Licencias/pages/LicenciasPage";
+
 
 
 export const Routes: RouteObject[] = [
@@ -95,6 +105,31 @@ export const Routes: RouteObject[] = [
     children: [
       { index: true, element: <AdminInicio />},
       { path: "modulos", element: <AdminModulos /> },
+      // ✅ Agrupadas bajo /evaluacion/
+      { path: "dimension-evaluacion", element: <CrearActividad /> },
+      { path: "nota-actividad", element: <NotaActividadPage /> },
+      { path: "nota-final", element: <NotaFinalPage /> },
+    ]
+  }, {
+    path: "/dashboard/profesor",
+    element: (
+      <RequireAuth allowedRoles={["profesor"]}>
+        <ProfesorLayout />
+      </RequireAuth>
+    ),
+    children: [
+      {index: true, element: <ProfesorInicio />},
+    ]
+  }, {
+    path: "/dashboard/tutor",
+    element: (
+      <RequireAuth allowedRoles={["tutor"]}>
+        <TutorLayout />
+      </RequireAuth>
+    ),
+    children: [
+      { index: true, element: <TutorInicio />},
+      { path: "licencia", element: <TutorLicenciasPage />},
     ]
   }
   // { path: "*", element: <NotFound /> }
