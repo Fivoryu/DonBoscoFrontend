@@ -30,6 +30,13 @@ import SuperAdminPuestos from "./app/dashboard/SuperAdmin/Gestion Usuarios/Puest
 import AdminLayout from "./app/dashboard/Admin/Layout";
 import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
+
+
+import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
+import SuperAdminClase       from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
+import SuperAdminCalendarioAcademico
+  from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
+
 import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
 import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
@@ -45,6 +52,7 @@ import ProfesorLayout from "./app/dashboard/Profesor/Layout";
 import TutorLayout from "./app/dashboard/Tutor/Layout";
 import TutorInicio from "./app/dashboard/Tutor/Inicio";
 import TutorLicenciasPage from "./app/dashboard/Tutor/Estudiantes/Licencias/pages/LicenciasPage";
+
 
 
 
@@ -84,16 +92,25 @@ export const Routes: RouteObject[] = [
       { path: "paralelos", element: <SuperAdminParalelos />},
       { path: "roles", element: <SuperAdminRoles /> },
       { path: "tipo-horario", element: <SuperAdminTipoHorario />},
-      { path: "carga-horaria", element: <SuperAdminCargaHoraria />},
+    
       { path: "horario", element: <SuperAdminHorario />},
       { path: "materia", element: <SuperAdminMateria />},
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
+<<<<<<< HEAD
+
+      { path:"clases", element: <SuperAdminClase/>}
+
+    
+      
+ 
+=======
       { path: "alumnos", element: <SuperAdminEstudiantes /> },
       { path: "tutores", element: <SuperAdminTutor />},
       { path: "clases", element: <SuperAdminClase /> },
       { path: "calendario-academico", element: <SuperAdminCalendarioAcademico /> },
+>>>>>>> 86642d2919e8a5ff6123dd0771813c82b3888eeb
     ],
   }, {
     path: "/dashboard/admin/",
