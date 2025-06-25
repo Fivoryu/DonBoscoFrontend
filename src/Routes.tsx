@@ -52,6 +52,8 @@ import ProfesorLayout from "./app/dashboard/Profesor/Layout";
 import TutorLayout from "./app/dashboard/Tutor/Layout";
 import TutorInicio from "./app/dashboard/Tutor/Inicio";
 import TutorLicenciasPage from "./app/dashboard/Tutor/Estudiantes/Licencias/pages/LicenciasPage";
+import SuperadminClaseHorario from "./app/dashboard/SuperAdmin//Calendario Academico/ClaseHorario";
+
 
 
 
@@ -98,6 +100,8 @@ export const Routes: RouteObject[] = [
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
+      { path: "clase-horario", element: <SuperadminClaseHorario /> },
+      
 <<<<<<< HEAD
 
       { path:"clases", element: <SuperAdminClase/>}
