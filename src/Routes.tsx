@@ -39,9 +39,6 @@ import SuperAdminCalendarioAcademico
 
 import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
-import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
-import SuperAdminClase from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
-import SuperAdminCalendarioAcademico from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
 
 import CrearActividad from "./app/dashboard/Admin/Evaluacion/DimensionEvaluacion";
 import NotaActividadPage from "./app/dashboard/Admin/Evaluacion/NotaActividadPage";
@@ -52,6 +49,11 @@ import ProfesorLayout from "./app/dashboard/Profesor/Layout";
 import TutorLayout from "./app/dashboard/Tutor/Layout";
 import TutorInicio from "./app/dashboard/Tutor/Inicio";
 import TutorLicenciasPage from "./app/dashboard/Tutor/Estudiantes/Licencias/pages/LicenciasPage";
+import AttendanceWizardPage from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard";
+import CreateAttendance from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/CreateAttendance";
+import AttendanceList from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceList";
+import AttendanceStats from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceStats";
+import AttendanceWizardLayout from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard/AttendanceWizardLayout";
 
 
 
@@ -98,19 +100,24 @@ export const Routes: RouteObject[] = [
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
-<<<<<<< HEAD
 
-      { path:"clases", element: <SuperAdminClase/>}
+      { path:"clases", element: <SuperAdminClase/>},
 
-    
+      { path:"asistencia", element: <AttendanceWizardLayout />,
+        children: [
+          { index: true, element: <AttendanceWizardPage /> },
+          { path: "actions/create", element: <CreateAttendance /> },
+          { path: "actions/list", element: <AttendanceList /> },
+          { path: "actions/stats", element: <AttendanceStats /> },
+        ]
+      },
       
  
-=======
       { path: "alumnos", element: <SuperAdminEstudiantes /> },
       { path: "tutores", element: <SuperAdminTutor />},
       { path: "clases", element: <SuperAdminClase /> },
       { path: "calendario-academico", element: <SuperAdminCalendarioAcademico /> },
->>>>>>> 86642d2919e8a5ff6123dd0771813c82b3888eeb
+      { path: "carga-horaria", element: <SuperAdminCargaHoraria /> },
     ],
   }, {
     path: "/dashboard/admin/",
