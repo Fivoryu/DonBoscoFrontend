@@ -45,28 +45,23 @@ import SuperAdminCalendarioAcademico
 import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
 
-<<<<<<< HEAD
-import CrearActividad from "./app/dashboard/Admin/Evaluacion/DimensionEvaluacion";
-import NotaActividadPage from "./app/dashboard/Admin/Evaluacion/NotaActividadPage";
-import NotaFinalPage from "./app/dashboard/Admin/Evaluacion/NotaFinalPage";
-
-import ProfesorInicio from "./app/dashboard/Profesor/Inicio";
-import ProfesorLayout from "./app/dashboard/Profesor/Layout";
-import TutorLayout from "./app/dashboard/Tutor/Layout";
-import TutorInicio from "./app/dashboard/Tutor/Inicio";
-import TutorLicenciasPage from "./app/dashboard/Tutor/Estudiantes/Licencias/pages/LicenciasPage";
-import AttendanceWizardPage from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard";
-import CreateAttendance from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/CreateAttendance";
-import AttendanceList from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceList";
-import AttendanceStats from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceStats";
-import AttendanceWizardLayout from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard/AttendanceWizardLayout";
-import SuperadminClaseHorario from "./app/dashboard/SuperAdmin//Calendario Academico/ClaseHorario";
-=======
 import GenerarLicencia from "./app/dashboard/Tutor/GenerarLicencia.tsx";
 
 import SuperAdminLicencia from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Licencia/page.tsx";
 import GestionarBoletinPage from "./app/dashboard/SuperAdmin/Evaluacion Academica/Gestionar Boletin/page.tsx";
->>>>>>> origin/Feature-GestionarLicenciasEst
+import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
+import SuperadminClaseHorario from "./app/dashboard/SuperAdmin/Calendario Academico/ClaseHorario.tsx";
+import AttendanceWizardLayout from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard/AttendanceWizardLayout.tsx";
+import AttendanceWizardPage from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard/index.tsx";
+import CreateAttendance from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/CreateAttendance.tsx";
+import AttendanceList from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceList.tsx";
+import AttendanceStats from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceStats.tsx";
+import CrearActividad from "./app/dashboard/Admin/Evaluacion/DimensionEvaluacion.tsx";
+import NotaActividadPage from "./app/dashboard/Admin/Evaluacion/NotaActividadPage.tsx";
+import NotaFinalPage from "./app/dashboard/Admin/Evaluacion/NotaFinalPage.tsx";
+import ProfesorInicio from "./app/dashboard/Profesor/Inicio.tsx";
+import ProfesorLayout from "./app/dashboard/Profesor/Layout.tsx";
+import TutorLicenciasPage from "./app/dashboard/Tutor/Estudiantes/Licencias/pages/LicenciasPage.tsx";
 
 
 
@@ -107,7 +102,6 @@ export const Routes: RouteObject[] = [
       { path: "cursos", element: <SuperAdminCursos /> },
       { path: "paralelos", element: <SuperAdminParalelos /> },
       { path: "roles", element: <SuperAdminRoles /> },
-<<<<<<< HEAD
       { path: "tipo-horario", element: <SuperAdminTipoHorario />},
     
       { path: "horario", element: <SuperAdminHorario />},
@@ -129,7 +123,6 @@ export const Routes: RouteObject[] = [
       },
       
  
-=======
       { path: "tipo-horario", element: <SuperAdminTipoHorario /> },
 
       { path: "horario", element: <SuperAdminHorario /> },
@@ -137,17 +130,13 @@ export const Routes: RouteObject[] = [
       { path: "materia-curso", element: <SuperAdminMateriaCurso /> },
       { path: "especialidad", element: <SuperAdminEspecialidad /> },
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage /> },
->>>>>>> origin/Feature-GestionarLicenciasEst
       { path: "alumnos", element: <SuperAdminEstudiantes /> },
       { path: "tutores", element: <SuperAdminTutor /> },
       { path: "clases", element: <SuperAdminClase /> },
       { path: "calendario-academico", element: <SuperAdminCalendarioAcademico /> },
-<<<<<<< HEAD
       { path: "carga-horaria", element: <SuperAdminCargaHoraria /> },
-=======
       { path: "licencia", element: <SuperAdminLicencia /> },
       { path: "nota-final", element: <GestionarBoletinPage /> },
->>>>>>> origin/Feature-GestionarLicenciasEst
     ],
   }, {
     path: "/dashboard/admin/",
