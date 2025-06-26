@@ -54,6 +54,8 @@ import CreateAttendance from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asi
 import AttendanceList from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceList";
 import AttendanceStats from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceStats";
 import AttendanceWizardLayout from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard/AttendanceWizardLayout";
+import SuperadminClaseHorario from "./app/dashboard/SuperAdmin//Calendario Academico/ClaseHorario";
+
 
 
 
@@ -100,6 +102,9 @@ export const Routes: RouteObject[] = [
       { path: "materia-curso", element: <SuperAdminMateriaCurso />},
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
+      { path: "clase-horario", element: <SuperadminClaseHorario /> },
+      
+<<<<<<< HEAD
 
       { path:"clases", element: <SuperAdminClase/>},
 
