@@ -103,8 +103,6 @@ export const Routes: RouteObject[] = [
       { path: "especialidad", element: <SuperAdminEspecialidad />},
       { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage/>},
       { path: "clase-horario", element: <SuperadminClaseHorario /> },
-      
-<<<<<<< HEAD
 
       { path:"clases", element: <SuperAdminClase/>},
 
