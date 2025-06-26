@@ -117,7 +117,7 @@ export default function CalendarioAcademico() {
       fecha_fin: form.fecha_fin,
       activo: form.activo,
     };
-
+    console.log("Payload:", payload);
     const req = editing
       ? AxiosInstance.put(`/calendario/calendarios/${editing!.id}/editar/`, payload)
       : AxiosInstance.post("/calendario/calendarios/crear/", payload);

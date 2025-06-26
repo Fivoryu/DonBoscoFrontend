@@ -31,15 +31,21 @@ import AdminLayout from "./app/dashboard/Admin/Layout";
 import AdminInicio from "./app/dashboard/Admin/Inicio";
 import AdminModulos from "./app/dashboard/Admin/Gestion Academica/Modulo";
 
+import TutorLayout from "./app/dashboard/Tutor/Layout";
+import TutorInicio from "./app/dashboard/Tutor/Inicio";
+import MisEstudiantes from "./app/dashboard/Tutor/MisEstudiantes";
+import BoletinDetalle from "./app/dashboard/Tutor/Boletin/BoletinDetalle";
 
-import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
-import SuperAdminClase       from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
+
+//import SuperAdminCargaHoraria from "./app/dashboard/SuperAdmin/Planificacion Academica/CargaHoraria";
+import SuperAdminClase from "./app/dashboard/SuperAdmin/Planificacion Academica/clases";
 import SuperAdminCalendarioAcademico
   from "./app/dashboard/SuperAdmin/Calendario Academico/CaledarioAcademico";
 
 import SuperAdminTutor from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Tutores/TutoresPage";
 import SuperAdminEstudiantes from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Estudiantes/EstudiantesPage";
 
+<<<<<<< HEAD
 import CrearActividad from "./app/dashboard/Admin/Evaluacion/DimensionEvaluacion";
 import NotaActividadPage from "./app/dashboard/Admin/Evaluacion/NotaActividadPage";
 import NotaFinalPage from "./app/dashboard/Admin/Evaluacion/NotaFinalPage";
@@ -55,6 +61,12 @@ import AttendanceList from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asist
 import AttendanceStats from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/actions/AttendanceStats";
 import AttendanceWizardLayout from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Asistencia/pages/AsistenciaWizard/AttendanceWizardLayout";
 import SuperadminClaseHorario from "./app/dashboard/SuperAdmin//Calendario Academico/ClaseHorario";
+=======
+import GenerarLicencia from "./app/dashboard/Tutor/GenerarLicencia.tsx";
+
+import SuperAdminLicencia from "./app/dashboard/SuperAdmin/Gestion Estudiantil/Licencia/page.tsx";
+import GestionarBoletinPage from "./app/dashboard/SuperAdmin/Evaluacion Academica/Gestionar Boletin/page.tsx";
+>>>>>>> origin/Feature-GestionarLicenciasEst
 
 
 
@@ -75,7 +87,7 @@ export const Routes: RouteObject[] = [
   },
   {
     path: "/dashboard/superadmin",
-    element: ( 
+    element: (
       <RequireAuth allowedRoles={["superadmin"]}>
         <SuperAdminLayout />
       </RequireAuth>
@@ -88,13 +100,14 @@ export const Routes: RouteObject[] = [
       { path: "admin", element: <SuperAdminAdmins /> },
       { path: "permisos", element: <SuperAdminPuestos /> },
       { path: "infraestructura", element: <SuperAdminInfraestructura /> },
-      { path: "profesor", element: <SuperAdminProfesor />},
+      { path: "profesor", element: <SuperAdminProfesor /> },
       { path: "grados", element: <SuperAdminGrados /> },
       { path: "modulos", element: <SuperAdminModulos /> },
       { path: "aulas", element: <SuperAdminAulas /> },
       { path: "cursos", element: <SuperAdminCursos /> },
-      { path: "paralelos", element: <SuperAdminParalelos />},
+      { path: "paralelos", element: <SuperAdminParalelos /> },
       { path: "roles", element: <SuperAdminRoles /> },
+<<<<<<< HEAD
       { path: "tipo-horario", element: <SuperAdminTipoHorario />},
     
       { path: "horario", element: <SuperAdminHorario />},
@@ -116,11 +129,25 @@ export const Routes: RouteObject[] = [
       },
       
  
+=======
+      { path: "tipo-horario", element: <SuperAdminTipoHorario /> },
+
+      { path: "horario", element: <SuperAdminHorario /> },
+      { path: "materia", element: <SuperAdminMateria /> },
+      { path: "materia-curso", element: <SuperAdminMateriaCurso /> },
+      { path: "especialidad", element: <SuperAdminEspecialidad /> },
+      { path: "bitacora/:usuarioId/usuario/", element: <BitacoraUsuarioPage /> },
+>>>>>>> origin/Feature-GestionarLicenciasEst
       { path: "alumnos", element: <SuperAdminEstudiantes /> },
-      { path: "tutores", element: <SuperAdminTutor />},
+      { path: "tutores", element: <SuperAdminTutor /> },
       { path: "clases", element: <SuperAdminClase /> },
       { path: "calendario-academico", element: <SuperAdminCalendarioAcademico /> },
+<<<<<<< HEAD
       { path: "carga-horaria", element: <SuperAdminCargaHoraria /> },
+=======
+      { path: "licencia", element: <SuperAdminLicencia /> },
+      { path: "nota-final", element: <GestionarBoletinPage /> },
+>>>>>>> origin/Feature-GestionarLicenciasEst
     ],
   }, {
     path: "/dashboard/admin/",
@@ -130,7 +157,7 @@ export const Routes: RouteObject[] = [
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <AdminInicio />},
+      { index: true, element: <AdminInicio /> },
       { path: "modulos", element: <AdminModulos /> },
       // ✅ Agrupadas bajo /evaluacion/
       { path: "dimension-evaluacion", element: <CrearActividad /> },
@@ -158,6 +185,23 @@ export const Routes: RouteObject[] = [
       { index: true, element: <TutorInicio />},
       { path: "licencia", element: <TutorLicenciasPage />},
     ]
+  },
+  {
+    path: "/dashboard/tutor",
+    element: (
+      <RequireAuth allowedRoles={["tutor"]}>
+        <TutorLayout />
+      </RequireAuth>
+    ),
+    children: [
+      { index: true, element: <TutorInicio /> },
+      { path: "licencia", element: <GenerarLicencia /> },
+      { path: "mis-estudiantes", element: <MisEstudiantes /> },
+      { path: "boletin/:id", element: <BoletinDetalle /> }
+    ]
   }
+
+
+
   // { path: "*", element: <NotFound /> }
 ];

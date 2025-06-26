@@ -140,7 +140,7 @@ export const SIDEBAR_SECTIONS_ADMIN: SidebarSection[] = [
       { to: "/dashboard/admin/especialidad", label: "Especialidad", icon: FileType, roles: ["superadmin", "admin"] },
       { to: "/dashboard/admin/profesor", label: "Profesor", icon: FaChalkboardTeacher, roles: ["superadmin", "admin"] },
       { to: "/dashboard/admin/grados", label: "Grados", icon: School, roles: ["superadmin", "admin", "profesor"] },
-      { to: "/dashboard/admin/alumnos", label: "Alumnos", icon: PiStudentLight, roles:["superadmin"]},
+      { to: "/dashboard/admin/alumnos", label: "Alumnos", icon: PiStudentLight, roles: ["superadmin"] },
       { to: "/dashboard/admin/tutores", label: "Tutores", icon: RiParentLine, roles: ["superadmin", "admin"] },
     ],
   },
@@ -161,8 +161,9 @@ export const SIDEBAR_SECTIONS_ADMIN: SidebarSection[] = [
     titleIcon: BookOpen,
     roles: ["superadmin", "admin", "profesor", "tutor"],
     items: [
-      { to: "/dashboard/admin/dimension-evaluacion", label: "Dimension Evaluacion", icon: PiExam, roles: ["superadmin", "admin"]},
-      { to: "/dashboard/admin/nota-actividad", label: "Nota Actividad", icon: LucideNotebookPen, roles: ["superadmin", "admin", "profesor"]
+      { to: "/dashboard/admin/dimension-evaluacion", label: "Dimension Evaluacion", icon: PiExam, roles: ["superadmin", "admin"] },
+      {
+        to: "/dashboard/admin/nota-actividad", label: "Nota Actividad", icon: LucideNotebookPen, roles: ["superadmin", "admin", "profesor"]
       },
       { to: "/dashboard/admin/nota-final", label: "Nota Final", icon: BookOpen, roles: ["superadmin", "admin", "profesor"] },
     ]
@@ -181,11 +182,11 @@ export const SIDEBAR_SECTIONS_ADMIN: SidebarSection[] = [
     titleIcon: MdAnalytics,
     roles: ["superadmin", "admin", "profesor"],
     items: [
-      { 
-        to: "/dashboard/admin/analisis/rendimiento-academico", 
-        label: "Analizar Rendimiento Académico", 
-        icon: TbReportAnalytics, 
-        roles: ["superadmin", "admin", "profesor"] 
+      {
+        to: "/dashboard/admin/analisis/rendimiento-academico",
+        label: "Analizar Rendimiento Académico",
+        icon: TbReportAnalytics,
+        roles: ["superadmin", "admin", "profesor"]
       },
     ]
   },
@@ -227,68 +228,28 @@ export const SIDEBAR_SECTIONS_PROFESOR: SidebarSection[] = [
     roles: ["profesor"],
     items: [
       { to: "/dashboard/profesor/horario", label: "Horario", icon: ClockIcon, roles: ["profesor"] },
+      { to: "/dashboard/profesor/tipo-horario", label: "Tipo de Horario", icon: CalendarDays, roles: ["profesor"] },
     ],
-  },
-  {
-    title: "Gestion Estudiantil",
-    titleIcon: PiStudentLight,
-    roles: ["profesor"],
-    items: [
-      { to: "/dashboard/profesor/asistencia", label: "Asistencia", icon: Grid, roles: ["profesor"] },
-    ]
-  },
-  {
-    title: "Evaluación",
-    titleIcon: BookOpen,
-    roles: ["profesor"],
-    items: [
-      { to: "/dashboard/profesor/nota-actividad", label: "Registrar Calificaciones", icon: LucideNotebookPen, roles: ["profesor"] },
-      { to: "/dashboard/profesor/nota-final", label: "Generar Boletines", icon: BookOpen, roles: ["profesor"] },
-      { to: "/dashboard/profesor/calendario", label: "Ver Calendario", icon: CalendarDays, roles: ["profesor"] },
-    ]
   },
 ];
 
 
-export const SIDEBAR_SECTIONS_TUTOR: SidebarSection[] = [
+
+export const SIDEBAR_SECTIONS_TUTOR = [
   {
-    title: "Seguridad",
-    titleIcon: MdSecurity,
-    roles: [],
+    title: "Panel",
     items: [
-      {
-        to: "/login/",
-        label: "Iniciar sesión",
-        icon: LogIn,
-        roles: [],
-      },
-      // --- Cerrar sesión ---
-      {
-        to: "__logout__",
-        label: "Cerrar sesión",
-        icon: LogOut,
-        roles: [], // visible para cualquier usuario autenticado
-      },
-    ]
+      { label: "Inicio", path: "/dashboard/tutor" },
+      { label: "Generar Licencia", path: "/dashboard/tutor/licencia" },
+    ],
   },
   {
     title: "Estudiantes",
-    titleIcon: PiStudentLight,
-    roles: ["tutor"],
     items: [
-      { to: "/dashboard/tutor/estudiantes", label: "Mis Estudiantes", icon: PiStudentLight, roles: ["tutor"] },
-      { to: "/dashboard/tutor/asistencia", label: "Asistencia", icon: Grid, roles: ["tutor"] },
-      { to: "/dashboard/tutor/licencia", label: "Licencias Estudiantiles", icon: TbLicense, roles: ["tutor"] },
-    ]
+      {
+        label: "Mis Estudiantes",
+        path: "/dashboard/tutor/mis-estudiantes", // ← esto hará match correctamente
+      },
+    ],
   },
-  {
-    title: "Evaluación",
-    titleIcon: BookOpen,
-    roles: ["tutor"],
-    items: [
-      { to: "/dashboard/tutor/calendario", label: "Calendario", icon: CalendarDays, roles: ["tutor"] },
-      { to: "/dashboard/tutor/nota-actividad", label: "Calificaciones", icon: LucideNotebookPen, roles: ["tutor"] },
-      { to: "/dashboard/tutor/nota-final", label: "Boletines", icon: BookOpen, roles: ["tutor"] },
-    ]
-  }
-]
+];
